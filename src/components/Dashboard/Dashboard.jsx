@@ -3,10 +3,12 @@ import { useEffect, useContext, useState } from "react";
 import { UserContext } from "../../contexts/UserContext";
 
 import * as userService from '../../services/userService';
+import * as profileService from '../../services/profileService';
 
 const Dashboard = () => {
     const { user } = useContext(UserContext);
     const [users, setUsers] = useState([]);
+    const [profiles, setProfiles] = useState([]);
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -19,7 +21,21 @@ const Dashboard = () => {
             }
         };
 
-        if (user) fetchUsers();
+
+        const fetchProfiles = async () => {
+            try {
+                const fetchedProfiles = await profileService.index();
+                console.log(fetchedProfiles);
+                setProfiles([...fetchedProfiles]);
+            } catch (err) {
+                console.log(err);
+            }
+        };
+
+
+        if (user) { fetchUsers(); fetchProfiles(); };
+
+
     }, [user]);
 
     return (
@@ -28,16 +44,60 @@ const Dashboard = () => {
             <p>
                 This is a temporary dashboard page that will currently just show a list of all users to users who are signed in.
             </p>
+            <hr />
+            Users without profiles
+            <hr />
             <ul>
                 {users.map(user => (
-                    <li key={user._id}>
+                    <>
+                    {profiles.map(profile => (
+                        <>
+                        {(profile.userId !== user._id) ? (
+                            <li key={user._id}>
+                                <details>
+                                    <summary>{user.username}</summary>
+                                    {user._id}
+                                </details>
+                            </li>
+                        ):(
+                            <></>
+                        )}
+                        </>
+                    ))}
+                    </>
+                ))}
+            </ul>
+            <hr />
+            Users with profiles
+            <hr />
+            <ul>
+                {profiles.map(profile => (
+                    <li>
                         <details>
-                            <summary>{user.username}</summary>
-                            {user._id}
+                        {users.map(user => (
+                            <>
+                            {(user._id === profile.userId) ? (
+                                <>
+                                <summary>
+                                    {user.username}
+                                </summary>
+                                <div>
+                                    <ul>
+                                        <li>Comments Posted: {user.commentsPosted.length}</li>
+                                        <li>{profile.bio}</li>
+                                    </ul>
+                                </div>
+                                </>
+                            ):(
+                                <></>
+                            )}
+                            </>
+                        ))}
                         </details>
                     </li>
                 ))}
             </ul>
+            <hr />
         </main>
     );
 };
