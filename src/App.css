@@ -5,6 +5,52 @@
   text-align: center;
 }
 
+nav {
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+}
+
+main.form {
+  width: 100vw;
+  max-width: 360px;
+  border: 4px solid black;
+  padding: 0 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: fit-content;
+}
+
+form {
+  max-width: 400px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+
+  div {
+    margin: 6px 0;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .field {
+    flex-direction: column;
+    align-items: center;
+    input {
+      max-width: 500px;
+    }
+  }
+
+  button {
+    width: 30%;
+    margin: 0 10%;
+  }
+
+}
+
+
 .logo {
   height: 6em;
   padding: 1.5em;
