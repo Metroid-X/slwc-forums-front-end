@@ -20,6 +20,7 @@ const SignInForm = () => {
     };
 
     const handleSubmit = async (evt) => {
+        evt.preventDefault();
         try {
             const signedInUser = await signIn(formData);
 
