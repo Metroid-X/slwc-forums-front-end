@@ -45,29 +45,6 @@ const Dashboard = () => {
                 This is a temporary dashboard page that will currently just show a list of all users to users who are signed in.
             </p>
             <hr />
-            Users without profiles
-            <hr />
-            <ul className="nodots users">
-                {users.map(user => (
-                    <>
-                    {profiles.map(profile => (
-                        <>
-                        {(profile.userId !== user._id) ? (
-                            <li key={user._id}>
-                                <details>
-                                    <summary>{user.username}</summary>
-                                    {user._id}
-                                </details>
-                            </li>
-                        ):(
-                            <></>
-                        )}
-                        </>
-                    ))}
-                    </>
-                ))}
-            </ul>
-            <hr />
             Users with profiles
             <hr />
             <ul className="nodots users">
@@ -97,6 +74,16 @@ const Dashboard = () => {
                         </>
                     ))}
                     </>
+                ))}
+            </ul>
+            <hr />
+            All Users
+            <hr />
+            <ul className="nodots users">
+                {users.map(user => (
+                    <li key={user._id}>
+                        {user.username}
+                    </li>
                 ))}
             </ul>
             <hr />
