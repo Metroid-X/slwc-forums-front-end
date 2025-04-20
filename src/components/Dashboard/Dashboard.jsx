@@ -47,7 +47,7 @@ const Dashboard = () => {
             <hr />
             Users without profiles
             <hr />
-            <ul>
+            <ul className="nodots users">
                 {users.map(user => (
                     <>
                     {profiles.map(profile => (
@@ -70,31 +70,33 @@ const Dashboard = () => {
             <hr />
             Users with profiles
             <hr />
-            <ul>
-                {profiles.map(profile => (
-                    <li>
-                        <details>
-                        {users.map(user => (
-                            <>
-                            {(user._id === profile.userId) ? (
-                                <>
-                                <summary>
-                                    {user.username}
-                                </summary>
-                                <div>
-                                    <ul>
-                                        <li>Comments Posted: {user.commentsPosted.length}</li>
+            <ul className="nodots users">
+                {users.map(user => (
+                    <>
+                    {profiles.map(profile => (
+                        <>
+                        {(profile.userId === user._id) ? (
+                            <li key={user._id}>
+                                <details>
+                                    <summary>
+                                        <img className="avatar" src={profile.avatar} />{user.username}
+                                    </summary>
+                                    {/* {user._id} */}
+                                    <div>
+                                    <ul className="nodots">
+                                        Statistics:
+                                        <li>Comments Posted: {profile.commentsPosted.length}</li>
                                         <li>{profile.bio}</li>
                                     </ul>
                                 </div>
-                                </>
-                            ):(
-                                <></>
-                            )}
-                            </>
-                        ))}
-                        </details>
-                    </li>
+                                </details>
+                            </li>
+                        ):(
+                            <></>
+                        )}
+                        </>
+                    ))}
+                    </>
                 ))}
             </ul>
             <hr />

@@ -5,11 +5,29 @@
   text-align: center;
 }
 
-nav {
+
+ul.nodots {
+  list-style-type: none;
+  padding: 0;
+}
+
+ul.users li {
+  border: 2px solid black;
+  padding: 4px;
+  margin: 8px;
   ul {
-    list-style-type: none;
-    padding: 0;
+    border: 2px solid black;
+    margin-top: 8px;
+    li {
+      border: none;
+      margin: 0;
+    }
   }
+}
+
+img.avatar {
+  width: 40px;
+  vertical-align: sub;
 }
 
 main.form {

@@ -17,13 +17,13 @@ const NavBar = () => {
         <nav>
             
             {user ? (
-                <ul>
+                <ul className="nodots">
                     <li>Hello, {user.username}.</li>
                     <li><Link to='/'>Dashboard</Link></li>
                     <li><Link to='/' onClick={handleSignOut}>Sign Out</Link></li>
                 </ul>
             ) : (
-                <ul>
+                <ul className="nodots">
                     <li><Link to='/'>Home</Link></li>
                     <li><Link to='/sign-up'>Sign Up</Link></li>
                     <li><Link to='/sign-in'>Sign In</Link></li>
