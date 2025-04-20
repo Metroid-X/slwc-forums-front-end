@@ -1,4 +1,5 @@
 import { useEffect, useContext, useState } from "react";
+import { Link } from "react-router";
 
 import { UserContext } from "../../contexts/UserContext";
 
@@ -56,16 +57,21 @@ const Dashboard = () => {
                             <li key={user._id}>
                                 <details>
                                     <summary>
-                                        <img className="avatar" src={profile.avatar} />{user.username}
+                                        <Link to={(`/users/${user.username}/${profile._id}`)}><img className="avatar" src={profile.avatar} />{user.username}</Link>
                                     </summary>
-                                    {/* {user._id} */}
                                     <div>
-                                    <ul className="nodots">
-                                        Statistics:
-                                        <li>Comments Posted: {profile.commentsPosted.length}</li>
-                                        <li>{profile.bio}</li>
-                                    </ul>
-                                </div>
+                                        <ul className="nodots">
+                                            Statistics:
+                                            <li key='stats'>
+                                                Topics Posted: {profile.topicsPosted.length}
+                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+                                                Comments Posted: {profile.commentsPosted.length}
+                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+                                                Images Posted: {profile.linkedImages.length}
+                                            </li>
+                                            <li key='bio'>{profile.bio}</li>
+                                        </ul>
+                                    </div>
                                 </details>
                             </li>
                         ):(
@@ -82,7 +88,7 @@ const Dashboard = () => {
             <ul className="nodots users">
                 {users.map(user => (
                     <li key={user._id}>
-                        {user.username}
+                        <Link >{user.username}</Link>
                     </li>
                 ))}
             </ul>
