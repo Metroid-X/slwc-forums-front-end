@@ -21,6 +21,52 @@ const index = async () => {
     }
 };
 
+const create = async (formData) => {
+    try {
+
+        const res = await fetch(`${BASE_URL}/new`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${localStorage.getItem('token')}`},
+            body: JSON.stringify(formData),
+        });
+
+        return res.json();
+
+    } catch (err) {
+        console.log(err);
+    }
+};
+
+const update = async (formData, topicId) => {
+    try {
+
+        const res = await fetch(`${BASE_URL}/${topicId}`, {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json',},
+            body: JSON.stringify(formData),
+        });
+
+        return res.json();
+
+    } catch (err) {
+        console.log(err);
+    }
+};
+
+const deleteTopic = async (topicId) => {
+    try {
+        const res = await fetch(`${BASE_URL}/${topicId}`, {
+            method: 'DELETE',
+        });
+        return res.json();
+    } catch (err) {
+        console.log(err);
+    }
+};
+
 export {
     index,
+    create,
+    update,
+    deleteTopic,
 };

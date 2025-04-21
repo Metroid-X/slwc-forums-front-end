@@ -14,9 +14,11 @@ const SignUpForm = () => {
         username: '',
         password: '',
         passwordConf: '',
+        displayname: '',
+        bio: '',
     });
 
-    const { username, password, passwordConf } = formData;
+    const { username, password, passwordConf, displayname, bio, } = formData;
 
     const handleChange = (evt) => {
         setMessage('');
@@ -44,7 +46,7 @@ const SignUpForm = () => {
             <p>{message}</p>
             <form onSubmit={handleSubmit}>
                 <div className="field">
-                    <label htmlFor="username">Username:</label>
+                    <label htmlFor="username">*Username:</label>
                     <input 
                         type='text'
                         id='name'
@@ -55,7 +57,7 @@ const SignUpForm = () => {
                     />
                 </div>
                 <div className="field">
-                    <label htmlFor="password">Password:</label>
+                    <label htmlFor="password">*Password:</label>
                     <input 
                         type='text'
                         id='password'
@@ -66,7 +68,7 @@ const SignUpForm = () => {
                     />
                 </div>
                 <div className="field">
-                    <label htmlFor="passwordConf">Confirm Password:</label>
+                    <label htmlFor="passwordConf">*Confirm Password:</label>
                     <input 
                         type='text'
                         id='confirm'
@@ -74,6 +76,26 @@ const SignUpForm = () => {
                         name='passwordConf'
                         onChange={handleChange}
                         required
+                    />
+                </div>
+                <hr />
+                <div className="field">
+                    <label htmlFor="displayname">Set a Displayname:</label>
+                    <input 
+                        type='text'
+                        id='displayname'
+                        value={displayname}
+                        name='displayname'
+                        onChange={handleChange}
+                    />
+                </div>
+                <div className="field">
+                    <label htmlFor="bio">Write a bio for your profile:</label>
+                    <textarea 
+                        id='bio'
+                        value={bio}
+                        name='bio'
+                        onChange={handleChange}
                     />
                 </div>
                 <div>

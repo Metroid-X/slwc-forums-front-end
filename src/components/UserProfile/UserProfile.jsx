@@ -14,9 +14,6 @@ const UserProfile = () => {
     
     return (
         <main>
-            <h3>This is a temporary page for displaying a user profile.</h3>
-            Username: {params.userName}
-            <br/>
             <ProfileComponent profileId={params.profileId} userName={params.userName} />
         </main>
     )

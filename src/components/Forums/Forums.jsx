@@ -39,7 +39,7 @@ const Forums = () => {
                 const fetchedProfiles = await profileService.index();
                 console.log(fetchedProfiles);
                 setProfiles([...fetchedProfiles]);
-                
+
                 const fetchedBranches = await forumService.index();
                 console.log(fetchedBranches);
                 setForums([...fetchedBranches]);
@@ -61,9 +61,43 @@ const Forums = () => {
     }, [user])
     
     return (
-        <div>
-            
-        </div>
+        <main>
+            {user ? 
+                <nav className="bordered">
+                    <Link to={`/forums/${params.branchName}/new`}
+                    className="bordered padded margined forum-directory">
+                        <div>
+                            Create A Topic
+                        </div>
+                    </Link>
+                </nav>
+                :
+                <nav className="bordered">
+                    <div className="bordered padded margined forum-directory">
+                        Sign in or sign up to contribute.
+                    </div>
+                </nav>
+            }
+            <hr />
+            {forums.map(forum => (
+                <>
+                {(String(forum.name).toLowerCase().replaceAll(' ', '-') === params.branchName)
+                ? (
+                    <>
+                        {forum.topics.forEach(topic => (
+                            <>
+                            {topic.title}
+                            </>
+                        ))}
+                    </>
+                ) : (
+                    <>
+
+                    </>
+                )}
+                </>
+            ))}
+        </main>
     )
 }
 

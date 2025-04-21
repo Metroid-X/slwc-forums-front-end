@@ -25,13 +25,6 @@ const Landing = () => {
 
         const fetchTrustedStuff = async () => {
             try {
-                const fetchedUsers = await userService.index();
-                console.log(fetchedUsers);
-                setUsers([...fetchedUsers]);
-
-                const fetchedProfiles = await profileService.index();
-                console.log(fetchedProfiles);
-                setProfiles([...fetchedProfiles]);
             } catch (err) {
                 console.log(err);
             }
@@ -39,6 +32,14 @@ const Landing = () => {
 
         const fetchStuff = async () => {
             try {
+                const fetchedUsers = await userService.index();
+                console.log(fetchedUsers);
+                setUsers([...fetchedUsers]);
+
+                const fetchedProfiles = await profileService.index();
+                console.log(fetchedProfiles);
+                setProfiles([...fetchedProfiles]);
+
                 const fetchedBranches = await forumService.index();
                 console.log(fetchedBranches);
                 setForums([...fetchedBranches]);
@@ -61,23 +62,29 @@ const Landing = () => {
     
     return (
         <main>
-            {user ? 
-                <nav className="bordered">
-                    <Link
-                    className="bordered padded margined forum-directory">
-                        <div>
-                            Create A Topic
-                        </div>
-                    </Link>
-                </nav>
-                :
-                <nav className="bordered">
-                    <div className="bordered padded margined forum-directory">
-                        Sign in or sign up to contribute.
+            {forums.map(forum => (
+                <>
+                <div>
+                    Most recent topic in {forum.name}:
+                    <div className="bordered padded margined">
+                        {(forum.topics[0])}
                     </div>
-                </nav>
-            }
-            <hr />
+                    {user ? 
+                        <div className="bordered padded margined">
+                            <Link to={`/forums/${String(forum.name).toLowerCase().replaceAll(' ', '-')}/new`}
+                            className="forum-directory">
+                                <div>
+                                    Create A Topic
+                                </div>
+                            </Link>
+                        </div>
+                        :
+                        <></>
+                    }
+                </div>
+                <hr />
+                </>
+            ))}
         </main>
     );
 };
