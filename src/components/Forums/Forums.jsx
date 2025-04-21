@@ -24,13 +24,7 @@ const Forums = () => {
 
         const fetchTrustedStuff = async () => {
             try {
-                const fetchedUsers = await userService.index();
-                console.log(fetchedUsers);
-                setUsers([...fetchedUsers]);
-
-                const fetchedProfiles = await profileService.index();
-                console.log(fetchedProfiles);
-                setProfiles([...fetchedProfiles]);
+                
             } catch (err) {
                 console.log(err);
             }
@@ -38,6 +32,14 @@ const Forums = () => {
 
         const fetchStuff = async () => {
             try {
+                const fetchedUsers = await userService.index();
+                console.log(fetchedUsers);
+                setUsers([...fetchedUsers]);
+
+                const fetchedProfiles = await profileService.index();
+                console.log(fetchedProfiles);
+                setProfiles([...fetchedProfiles]);
+                
                 const fetchedBranches = await forumService.index();
                 console.log(fetchedBranches);
                 setForums([...fetchedBranches]);

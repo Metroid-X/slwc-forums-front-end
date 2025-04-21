@@ -3,6 +3,7 @@ import { Routes, Route, useParams } from 'react-router';
 
 import NavBar from './components/NavBar/NavBar';
 import Forums from './components/Forums/Forums';
+import NewTopicForm from './components/ForumForms/NewTopicForm'
 import SignUpForm from './components/SignUpForm/SignUpForm';
 import SignInForm from './components/SignInForm/SignInForm';
 import Landing from './components/Landing/Landing';
@@ -27,7 +28,8 @@ const App = () => {
         <Route path='/sign-up' element={<SignUpForm />} />
         <Route path='/sign-in' element={<SignInForm />} />
         <Route path='/profiles/:userName/:profileId' element={<UserProfile />} />
-        <Route path='/forums/:branchName' element={<UserProfile />} />
+        <Route path='/forums/:branchName' element={<Forums />} />
+        <Route path='/forums/:branchName/new' element={<NewTopicForm />} />
       </Routes>
     </>
   )
