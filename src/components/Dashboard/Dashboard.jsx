@@ -39,6 +39,8 @@ const Dashboard = () => {
 
     }, [user]);
 
+    
+
     return (
         <main>
             <h1>Welcome, {user?.username}</h1>
@@ -56,8 +58,8 @@ const Dashboard = () => {
                         {(profile.userId === user._id) ? (
                             <li key={user._id}>
                                 <details>
-                                    <summary>
-                                        <Link to={(`/users/${user.username}/${profile._id}`)}><img className="avatar" src={profile.avatar} />{user.username}</Link>
+                                    <summary className="av-box">
+                                        <Link to={(`/profiles/${user.username}/${profile._id}`)}><img className="avatar" src={profile.avatar} />{user.username}</Link>
                                     </summary>
                                     <div>
                                         <ul className="nodots">

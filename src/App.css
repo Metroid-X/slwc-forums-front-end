@@ -2,7 +2,15 @@
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
+  padding-top: 0.5rem;
   text-align: center;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  main { width: calc(100%); }
+  nav { width: calc(100% - 8px); }
+  hr { width: calc(100% - 2px); }
 }
 
 
@@ -25,9 +33,65 @@ ul.users li {
   }
 }
 
+nav {
+  display: flex;
+  padding: 2px;
+}
+
+.forum-directory {
+  min-width: 25%;
+}
+.forum-directory.padded.bordered.margined {
+  min-width: calc(25% - 16px);
+  width: 100%;
+}
+
+.go-right {
+  float: right;
+}
+
+.un-header {
+  font-weight: normal;
+}
+
+.bordered {
+  border: 2px solid black;
+}
+
+.padded {
+  padding: 4px;
+}
+
+.margined {
+  margin: 2px;
+}
+
+.av-box {
+  min-height: 40px;
+  padding: 8px;
+  text-align: start;
+  
+}
+
+summary {
+  display: block;
+}
+details {
+  summary::after{
+    content: '▸';
+    float: right;
+  }
+}
+details[open] {
+  summary::after {
+    transform: rotate(90deg);
+  }
+}
+
 img.avatar {
   width: 40px;
-  vertical-align: sub;
+  float: inline-start;
+  margin-right: 8px;
 }
 
 main.form {

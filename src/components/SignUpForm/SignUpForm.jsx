@@ -28,7 +28,7 @@ const SignUpForm = () => {
         try {
             const newUser = await signUp(formData);
             setUser(newUser);
-            navigate('/');
+            navigate('/profile/create');
         } catch (err) {
             setMessage(err.message);
         }

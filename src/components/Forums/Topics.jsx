@@ -4,7 +4,6 @@ import { Link, useParams } from "react-router";
 import { UserContext } from "../../contexts/UserContext";
 
 import ProfileComponent from "../UserProfile/ProfileComponent";
-import Forums from "../Forums/Forums";
 
 import * as userService from '../../services/userService';
 import * as profileService from '../../services/profileService';
@@ -12,7 +11,7 @@ import * as forumService from '../../services/forumService';
 import * as topicService from '../../services/topicService';
 import * as commentService from '../../services/commentService';
 
-const Landing = () => {
+const Forums = () => {
     let params = useParams();
     const { user } = useContext(UserContext);
     const [users, setUsers] = useState([]);
@@ -22,8 +21,7 @@ const Landing = () => {
     const [comments, setComments] = useState([]);
 
     useEffect(() => {
-
-        const fetchTrustedStuff = async () => {
+        const fetchStuff = async () => {
             try {
                 const fetchedUsers = await userService.index();
                 console.log(fetchedUsers);
@@ -32,13 +30,7 @@ const Landing = () => {
                 const fetchedProfiles = await profileService.index();
                 console.log(fetchedProfiles);
                 setProfiles([...fetchedProfiles]);
-            } catch (err) {
-                console.log(err);
-            }
-        }
-
-        const fetchStuff = async () => {
-            try {
+                
                 const fetchedBranches = await forumService.index();
                 console.log(fetchedBranches);
                 setForums([...fetchedBranches]);
@@ -57,31 +49,22 @@ const Landing = () => {
 
         fetchStuff();
 
-    }, [user])
+    })
     
     return (
-        <main>
-            {user ? 
-                <nav className="bordered">
-                    <Link
-                    className="bordered padded margined forum-directory">
+        <div>
+            <nav id="forum-nav" className="bordered">
+                {forums.map(forum => (
+                    <Link key={forum.name} className="bordered padded margined forum-directory">
                         <div>
-                            Create A Topic
+                            {forum.name}
                         </div>
                     </Link>
-                </nav>
-                :
-                <nav className="bordered">
-                    <div className="bordered padded margined forum-directory">
-                        Sign in or sign up to contribute.
-                    </div>
-                </nav>
-            }
-            <hr />
-        </main>
-    );
-};
+                ))}
+            </nav>
+        </div>
+    )
+}
 
 
-
-export default Landing
+export default Forums;
