@@ -11,7 +11,7 @@ import * as forumService from '../../services/forumService';
 import * as topicService from '../../services/topicService';
 import * as commentService from '../../services/commentService';
 
-const Forums = () => {
+const Topics = () => {
     let params = useParams();
     const { user } = useContext(UserContext);
     const [users, setUsers] = useState([]);
@@ -21,50 +21,61 @@ const Forums = () => {
     const [comments, setComments] = useState([]);
 
     useEffect(() => {
+
         const fetchStuff = async () => {
-            try {
-                const fetchedUsers = await userService.index();
-                console.log(fetchedUsers);
-                setUsers([...fetchedUsers]);
-
-                const fetchedProfiles = await profileService.index();
-                console.log(fetchedProfiles);
-                setProfiles([...fetchedProfiles]);
-                
-                const fetchedBranches = await forumService.index();
-                console.log(fetchedBranches);
-                setForums([...fetchedBranches]);
-                
-                const fetchedTopics = await topicService.index();
-                console.log(fetchedTopics);
-                setTopics([...fetchedTopics]);
-                
-                const fetchedComments = await commentService.index();
-                console.log(fetchedComments);
-                setComments([...fetchedComments]);
-            } catch (err) {
-                console.log(err);
-            }
-        };
-
+            
+            const fetchedProfiles = await profileService.index();
+            console.log(fetchedProfiles);
+            setProfiles([...fetchedProfiles]);
+            
+            const fetchedForums = await forumService.index();
+            console.log(fetchedForums);
+            setForums([...fetchedForums]);
+            
+            const fetchedTopics = await topicService.index();
+            console.log(fetchedTopics);
+            setTopics([...fetchedTopics]);
+            
+        }
         fetchStuff();
-
-    })
+            
+    },[])
     
     return (
-        <div>
-            <nav id="forum-nav" className="bordered">
-                {forums.map(forum => (
-                    <Link key={forum.name} className="bordered padded margined forum-directory">
-                        <div>
-                            {forum.name}
-                        </div>
-                    </Link>
+        <main className="margined">
+            <div className="bordered padded">
+                {topics.map(topic => (
+                    <>
+                        {topic._id === params.topicId ? (
+                            <>
+                                {profiles.map(profile =>(
+                                    <>{(profile._id === topic.userId) ? (
+                                        <div className="av-box bordered">
+                                            <Link to={(`/profiles/${profile.displayName}/${profile._id}`)}>
+                                                <h4>
+                                                    <img className="avatar" src={profile.avatar} />
+                                                    {profile.displayName}
+                                                </h4>
+                                            </Link>
+                                        </div>
+                                    ):(<></>)}</>
+                                ))}
+                            <h3>
+                                {topic.title}
+                            </h3>
+                            
+                            </>
+                        ) : (
+                            <>
+
+                            </>
+                        )}
+                    </>
                 ))}
-            </nav>
-        </div>
+            </div>
+        </main>
     )
 }
 
 
-export default Forums;
+export default Topics;

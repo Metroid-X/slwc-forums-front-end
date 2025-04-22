@@ -70,7 +70,9 @@ nav {
   min-height: 40px;
   padding: 8px;
   text-align: start;
-  
+  h4 {
+    margin-top: 0;
+  }
 }
 
 summary {
@@ -120,7 +122,12 @@ form {
   .field {
     flex-direction: column;
     align-items: center;
-    input {
+    input,textarea {
+      min-width: 55%;
+      max-width: 500px;
+    }
+    select {
+      min-width: calc(55% + 8px);
       max-width: 500px;
     }
   }

@@ -12,12 +12,11 @@ import * as forumService from '../../services/forumService';
 import * as topicService from '../../services/topicService';
 import * as commentService from '../../services/commentService';
 
-const Landing = () => {
+const Landing = ({forums}) => {
     let params = useParams();
     const { user } = useContext(UserContext);
     const [users, setUsers] = useState([]);
     const [profiles, setProfiles] = useState([]);
-    const [forums, setForums] = useState([]);
     const [topics, setTopics] = useState([]);
     const [comments, setComments] = useState([]);
 
@@ -39,10 +38,6 @@ const Landing = () => {
                 const fetchedProfiles = await profileService.index();
                 console.log(fetchedProfiles);
                 setProfiles([...fetchedProfiles]);
-
-                const fetchedBranches = await forumService.index();
-                console.log(fetchedBranches);
-                setForums([...fetchedBranches]);
                 
                 const fetchedTopics = await topicService.index();
                 console.log(fetchedTopics);
@@ -59,32 +54,10 @@ const Landing = () => {
         fetchStuff();
 
     }, [user])
-    
+
     return (
         <main>
-            {forums.map(forum => (
-                <>
-                <div>
-                    Most recent topic in {forum.name}:
-                    <div className="bordered padded margined">
-                        {(forum.topics[0])}
-                    </div>
-                    {user ? 
-                        <div className="bordered padded margined">
-                            <Link to={`/forums/${String(forum.name).toLowerCase().replaceAll(' ', '-')}/new`}
-                            className="forum-directory">
-                                <div>
-                                    Create A Topic
-                                </div>
-                            </Link>
-                        </div>
-                        :
-                        <></>
-                    }
-                </div>
-                <hr />
-                </>
-            ))}
+            
         </main>
     );
 };

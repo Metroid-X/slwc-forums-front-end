@@ -3,43 +3,35 @@ import { Link, useParams } from "react-router";
 
 import { UserContext } from "../../contexts/UserContext";
 
-import ProfileComponent from "../UserProfile/ProfileComponent";
-
 import * as userService from '../../services/userService';
 import * as profileService from '../../services/profileService';
 import * as forumService from '../../services/forumService';
 import * as topicService from '../../services/topicService';
 import * as commentService from '../../services/commentService';
+import * as imageService from '../../services/imageService';
 
-const Forums = () => {
+const Forums = ({props}) => {
     let params = useParams();
     const { user } = useContext(UserContext);
+    // const forums = props.forums;
     const [users, setUsers] = useState([]);
     const [profiles, setProfiles] = useState([]);
     const [forums, setForums] = useState([]);
     const [topics, setTopics] = useState([]);
     const [comments, setComments] = useState([]);
-
+    const [images, setImages] = useState([]);
+    
     useEffect(() => {
-
-        const fetchTrustedStuff = async () => {
-            try {
-                
-            } catch (err) {
-                console.log(err);
-            }
-        }
-
         const fetchStuff = async () => {
             try {
                 const fetchedUsers = await userService.index();
                 console.log(fetchedUsers);
                 setUsers([...fetchedUsers]);
-
+                
                 const fetchedProfiles = await profileService.index();
                 console.log(fetchedProfiles);
                 setProfiles([...fetchedProfiles]);
-
+                
                 const fetchedBranches = await forumService.index();
                 console.log(fetchedBranches);
                 setForums([...fetchedBranches]);
@@ -51,51 +43,53 @@ const Forums = () => {
                 const fetchedComments = await commentService.index();
                 console.log(fetchedComments);
                 setComments([...fetchedComments]);
+                
+                const fetchedImages = await imageService.index();
+                console.log(fetchedImages);
+                setImages([...fetchedImages]);
+                
             } catch (err) {
                 console.log(err);
             }
         };
-
+        
         fetchStuff();
-
+        
     }, [user])
     
+    const forum = (forums.find(({name}) => name === params.branchName));
+
     return (
         <main>
-            {user ? 
-                <nav className="bordered">
-                    <Link to={`/forums/${params.branchName}/new`}
-                    className="bordered padded margined forum-directory">
-                        <div>
-                            Create A Topic
-                        </div>
-                    </Link>
-                </nav>
-                :
-                <nav className="bordered">
-                    <div className="bordered padded margined forum-directory">
-                        Sign in or sign up to contribute.
-                    </div>
-                </nav>
-            }
-            <hr />
             {forums.map(forum => (
-                <>
-                {(String(forum.name).toLowerCase().replaceAll(' ', '-') === params.branchName)
-                ? (
+                forum.name === params.branchName ? (
                     <>
-                        {forum.topics.forEach(topic => (
-                            <>
-                            {topic.title}
-                            </>
-                        ))}
-                    </>
-                ) : (
+                    {forum.name}
+                    <br />
+                    <ul className="nodots">
+                    {(topics.filter(({forumName}) => forumName === params.branchName)).map(topic => (
+                        <li className="bordered padded">
+                            <div>
+                                <Link to={`/forums/${topic.forumName}/${topic._id}`}>
+                                    <h4>
+                                        {topic.title}
+                                    </h4>
+                                </Link>
+                            </div>
+                        </li>
+                    ))}
+                    </ul>
                     <>
 
                     </>
-                )}
-                </>
+                    <br />
+                    <Link to='/topics/new' >
+                        Create Topic Here
+                    </Link>
+                    </>
+                ) : (
+                    <></>
+                )
             ))}
         </main>
     )

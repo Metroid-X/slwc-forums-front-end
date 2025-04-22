@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Link, useParams } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
 
 import { UserContext } from "../../contexts/UserContext";
 
@@ -13,7 +13,8 @@ import * as topicService from '../../services/topicService';
 import * as commentService from '../../services/commentService';
 
 const NavBar = () => {
-    let params = useParams();
+    const params = useParams();
+    const navigate = useNavigate();
     const { user } = useContext(UserContext);
     const [users, setUsers] = useState([]);
     const [profiles, setProfiles] = useState([]);
@@ -76,6 +77,9 @@ const NavBar = () => {
                 <Link to='/users' 
                     className="bordered padded margined forum-directory"
                 >User-List</Link>
+                <Link to='/topics/new' 
+                    className="bordered padded margined forum-directory"
+                >Create New Topic</Link>
                 <Link to='/' 
                     className="bordered padded margined forum-directory"
                  onClick={handleSignOut}>Sign Out</Link>
@@ -96,8 +100,9 @@ const NavBar = () => {
         <hr />
         <nav className="bordered">
             {forums.map(forum => (
-                <Link to={String(`/forums/${forum.name}`).toLowerCase().replaceAll(' ', '-')} key={forum.name}
-                className="bordered padded margined forum-directory">
+                <Link to={`/forums/${forum.name}`} key={forum.name}
+                className="bordered padded margined forum-directory"
+                >
                     <div>
                         {forum.name}
                     </div>

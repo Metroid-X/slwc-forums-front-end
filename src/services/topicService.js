@@ -26,7 +26,10 @@ const create = async (formData) => {
 
         const res = await fetch(`${BASE_URL}/new`, {
             method: 'POST',
-            headers: { Authorization: `Bearer ${localStorage.getItem('token')}`},
+            headers: { 
+                'Content-Type': 'application/json',
+                 Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
             body: JSON.stringify(formData),
         });
 

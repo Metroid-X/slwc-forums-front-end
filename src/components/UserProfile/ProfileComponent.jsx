@@ -5,14 +5,20 @@ import { UserContext } from "../../contexts/UserContext";
 
 import * as userService from '../../services/userService';
 import * as profileService from '../../services/profileService';
+import * as forumService from '../../services/forumService';
+import * as topicService from '../../services/topicService';
+import * as commentService from '../../services/commentService';
 
 
-const ProfileComponent = (props) => {
+const ProfileComponent = ({props,profileId,userName}) => {
     // const params = useParams();
     const { user } = useContext(UserContext);
     const [users, setUsers] = useState([]);
     const [profiles, setProfiles] = useState([]);
-    const [profile, setProfile] = useState([]);
+    const forums = props.forums
+    const topics = props.topics
+    const comments = props.comments
+    const images = props.images
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -44,10 +50,10 @@ const ProfileComponent = (props) => {
 
     return (
         <div>
-            Profile Id: {props.profileId}
+            Profile Id: {profileId}
             <div className="av-box bordered">
                 {profiles.map(profile => (<>{users.map(user => (<>
-                    {(user.username === props.userName && user._id === profile.userId) ? (
+                    {(user.username === userName && user._id === profile.userId) ? (
                         <>
                         <h4>
                             <img className="avatar" src={profile.avatar}  />
@@ -63,9 +69,15 @@ const ProfileComponent = (props) => {
                             </sup>
                             <br/>
                             <span className="un-header">
-                                <sup>|&nbsp;&nbsp;Topics: {profile.topicsPosted.length}&nbsp;&nbsp;</sup> 
-                                <sup>|&nbsp;&nbsp;Comments: {profile.commentsPosted.length}&nbsp;&nbsp;</sup>
-                                <sup>|&nbsp;&nbsp;Images: {profile.linkedImages.length}&nbsp;&nbsp;|</sup>
+                                <sup>|&nbsp;&nbsp;Topics: {
+                                    topics.filter(topic => topic.userId === profileId).length
+                                }&nbsp;&nbsp;</sup> 
+                                <sup>|&nbsp;&nbsp;Comments: {
+                                    comments.filter(comment => comment.userId === profileId).length
+                                }&nbsp;&nbsp;</sup>
+                                <sup>|&nbsp;&nbsp;Images: {
+                                    images.filter(image => image.userId === profileId).length
+                                }&nbsp;&nbsp;|</sup>
                             </span>
                         </h4>
                         </>

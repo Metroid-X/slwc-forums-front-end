@@ -1,4 +1,4 @@
-const BASE_URL = `${import.meta.env.VITE_BACK_END_SERVER_URL}/forums`;
+const BASE_URL = `${import.meta.env.VITE_BACK_END_SERVER_URL}/images`;
 
 const index = async () => {
     try {
@@ -40,5 +40,4 @@ const branch = async (branchName) => {
 
 export {
     index,
-    branch,
 };

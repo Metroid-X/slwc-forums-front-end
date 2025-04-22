@@ -8,13 +8,13 @@ import ProfileComponent from "./ProfileComponent";
 import * as userService from '../../services/userService';
 import * as profileService from '../../services/profileService';
 
-const UserProfile = () => {
+const UserProfile = ({props}) => {
     let params = useParams()
     const { user } = useContext(UserContext);
     
     return (
         <main>
-            <ProfileComponent profileId={params.profileId} userName={params.userName} />
+            <ProfileComponent profileId={params.profileId} userName={params.userName} props={props} />
         </main>
     )
 }

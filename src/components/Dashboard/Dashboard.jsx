@@ -59,7 +59,7 @@ const Dashboard = () => {
                             <li key={user._id}>
                                 <details>
                                     <summary className="av-box">
-                                        <Link to={(`/profiles/${user.username}/${profile._id}`)}><img className="avatar" src={profile.avatar} />{user.username}</Link>
+                                        <Link to={(`/profiles/${profile.displayName}/${profile._id}`)}><img className="avatar" src={profile.avatar} />{user.username}</Link>
                                     </summary>
                                     <div>
                                         <ul className="nodots">
