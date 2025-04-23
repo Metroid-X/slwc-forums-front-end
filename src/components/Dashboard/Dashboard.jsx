@@ -65,11 +65,7 @@ const Dashboard = () => {
                                         <ul className="nodots">
                                             Statistics:
                                             <li key='stats'>
-                                                Topics Posted: {profile.topicsPosted.length}
-                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
-                                                Comments Posted: {profile.commentsPosted.length}
-                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
-                                                Images Posted: {profile.linkedImages.length}
+                                                
                                             </li>
                                             <li key='bio'>{profile.bio}</li>
                                         </ul>

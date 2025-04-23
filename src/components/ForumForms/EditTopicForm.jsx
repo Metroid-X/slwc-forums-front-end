@@ -11,7 +11,7 @@ import * as forumService from '../../services/forumService';
 import * as topicService from '../../services/topicService';
 import * as commentService from '../../services/commentService';
 
-const NewTopicForm = () => {
+const EditTopicForum = ({props, getSomeId}) => {
     let params = useParams();
     const navigate = useNavigate();
 
@@ -22,6 +22,15 @@ const NewTopicForm = () => {
     const [topics, setTopics] = useState([]);
     const [comments, setComments] = useState([]);
     const [message, setMessage] = useState('');
+    const [branchTopic, setTopic] = useState({
+        branch: {},
+        topic: {},
+        topicComments: [],
+        profile: {},
+        bodyComment: {},
+    });
+
+    const { branch, topic, topicComments, profile, bodyComment } = branchTopic;
 
     useEffect(() => {
 
@@ -55,6 +64,10 @@ const NewTopicForm = () => {
                 console.log(fetchedComments);
                 setComments([...fetchedComments]);
 
+                const fetchedTopic = await topicService.branchTopic(params.branchName, params.topicId);
+                console.log(fetchedTopic);
+                setTopic({...fetchedTopic});
+                
             } catch (err) {
                 console.log(err);
             }
@@ -65,117 +78,62 @@ const NewTopicForm = () => {
     }, [user])
     
     const [formData, setFormData] = useState({
-        _user: user,
-        _profile: user.profile,
-        title: '',
-        bodyContent: '',
-        forumName: params.branchName?(params.branchName):(''),
-        linkedImages: '',
+        title: topic.title,
+        bodyContent: (bodyComment.body),
+        linkedImages: (bodyComment.linkedImages),
         tags: '',
     });
 
-    const { _user, title, forumName, linkedImages, bodyContent, tags, } = formData;
+    const { title, linkedImages, bodyContent, } = formData;
 
     const handleChange = (evt) => {
         setMessage('');
         setFormData({ ...formData, [evt.target.name]: evt.target.value });
     };
 
-    // setFormData({...formData, name: currentForum.name})
-
     const handleSubmit = async (evt) => {
         evt.preventDefault();
         try {
-            const newTopic = await topicService.create(formData);
-            setTopics([newTopic, ...topics])
-            navigate(`/forums/${newTopic.topic.forumName}/${newTopic.topic._id}`);
+            const updatedTopic = await topicService.update(formData, params.topicId);
+            setMessage(JSON.stringify(updatedTopic));
+            navigate(`/forums/${params.branchName}/${params.topicId}`);
         } catch (err) {
             setMessage(err.message);
         }
-    }
-
-    const isFormInvalid = () => {
-        return !(forumName && title && bodyContent);
     };
 
-    console.log(formData)
+    const isFormInvalid = () => {
+        return !(title && bodyContent);
+    };
+
+    console.log(formData);
 
     return (
         <main className="form">
             <p>{message}</p>
             <form onSubmit={handleSubmit}>
                 <div className="field">
-                    <label htmlFor="forumName">*Branch to Post:</label>
-                    <select 
-                        type='text'
-                        id='branch'
-                        name='forumName'
-                        defaultValue={forumName}
-                        onChange={handleChange}
-                        required
-                    >
-                        {(params.branchName)?(
-                            <option value={params.branchName} >
-                                {(params.branchName).split('-').map(seg => (
-                                    <>
-                                    {`${seg.split('')[0].toUpperCase()}${String(seg.split('').slice(1)).replaceAll(',','')} `}
-                                    </>
-                                ))}
-                            </option>
-                        ):(
-                            <option value=''>
-                                Please select a forum branch
-                            </option>
-                        )}
-                        {forums.map(forum => (
-                            <>
-                            {(forum.name !== params.branchName)?(
-                                <option 
-                                    value={forum.name} 
-                                    key={forum.name}
-                                >
-                                    {(forum.name).split('-').map(seg => (
-                                        <>
-                                        {`${seg.split('')[0].toUpperCase()}${String(seg.split('').slice(1)).replaceAll(',','')} `}
-                                        </>
-                                    ))}
-                                </option>
-                            ):(
-                                <></>
-                            )}
-                            </>
-                        ))}
-                    </select>
-                </div>
-                <div className="field">
                     <label htmlFor="title">*Title:</label>
                     <input 
                         type='text'
                         id='title'
+                        defaultValue={topic.title}
                         value={title}
                         name='title'
                         onChange={handleChange}
+                        onClick={handleChange}
                         required
                     />
-                </div>
-                <div className="field">
-                    <label htmlFor="tags">Tags:</label>
-                    <input 
-                        type='text'
-                        id='tags'
-                        value={tags}
-                        name='tags'
-                        onChange={handleChange}
-                    />
-                    <sup>*Separate tags with spaces</sup>
                 </div>
                 <div className="field">
                     <label htmlFor="bodyContent">*Body:</label>
                     <textarea 
                         id='bodyContent'
+                        defaultValue={bodyComment.body}
                         value={bodyContent}
                         name='bodyContent'
                         onChange={handleChange}
+                        onClick={handleChange}
                         required
                     />
                 </div>
@@ -184,17 +142,19 @@ const NewTopicForm = () => {
                     <textarea 
                         id='linkedImages'
                         value={linkedImages}
+                        defaultValue={bodyComment.linkedImages}
                         name='linkedImages'
                         onChange={handleChange}
+                        onClick={handleChange}
                     />
                     <sup>*Separate image URLs with spaces</sup>
                 </div>
                 <div>
                     <button disabled={isFormInvalid()}>
-                        Post It!
+                        Submit Edit
                     </button>
-                    <button onClick={() => navigate(params.branchName?(`/forums/${params.branchName}`):(`/`))}>
-                        Cancel
+                    <button onClick={() => navigate(`/forums/${params.branchName}/${params.topicId}`)}>
+                        Cancel Edit
                     </button>
                 </div>
             </form>
@@ -203,4 +163,4 @@ const NewTopicForm = () => {
 }
 
 
-export default NewTopicForm;
+export default EditTopicForum;

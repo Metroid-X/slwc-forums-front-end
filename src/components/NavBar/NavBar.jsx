@@ -19,8 +19,8 @@ const NavBar = () => {
     const [users, setUsers] = useState([]);
     const [profiles, setProfiles] = useState([]);
     const [forums, setForums] = useState([]);
-    const [topics, setTopics] = useState([]);
-    const [comments, setComments] = useState([]);
+    // const [topics, setTopics] = useState([]);
+    // const [comments, setComments] = useState([]);
 
     const handleSignOut = () => {
         localStorage.removeItem('token');
@@ -32,11 +32,11 @@ const NavBar = () => {
         const fetchTrustedStuff = async () => {
             try {
                 const fetchedUsers = await userService.index();
-                console.log(fetchedUsers);
+                // console.log(fetchedUsers);
                 setUsers([...fetchedUsers]);
 
                 const fetchedProfiles = await profileService.index();
-                console.log(fetchedProfiles);
+                // console.log(fetchedProfiles);
                 setProfiles([...fetchedProfiles]);
             } catch (err) {
                 console.log(err);
@@ -46,16 +46,16 @@ const NavBar = () => {
         const fetchStuff = async () => {
             try {
                 const fetchedBranches = await forumService.index();
-                console.log(fetchedBranches);
+                // console.log(fetchedBranches);
                 setForums([...fetchedBranches]);
                 
-                const fetchedTopics = await topicService.index();
-                console.log(fetchedTopics);
-                setTopics([...fetchedTopics]);
+                // const fetchedTopics = await topicService.index();
+                // console.log(fetchedTopics);
+                // setTopics([...fetchedTopics]);
                 
-                const fetchedComments = await commentService.index();
-                console.log(fetchedComments);
-                setComments([...fetchedComments]);
+                // const fetchedComments = await commentService.index();
+                // console.log(fetchedComments);
+                // setComments([...fetchedComments]);
             } catch (err) {
                 console.log(err);
             }
@@ -102,6 +102,8 @@ const NavBar = () => {
             {forums.map(forum => (
                 <Link to={`/forums/${forum.name}`} key={forum.name}
                 className="bordered padded margined forum-directory"
+                onClick={() => {window.location.href=`/forums/${forum.name}`}}
+                type="button"
                 >
                     <div>
                         {forum.name}

@@ -10,42 +10,43 @@ import * as topicService from '../../services/topicService';
 import * as commentService from '../../services/commentService';
 import * as imageService from '../../services/imageService';
 
-const Forums = ({props}) => {
+const Forums = ({props, getSomeId}) => {
     let params = useParams();
     const { user } = useContext(UserContext);
     // const forums = props.forums;
     const [users, setUsers] = useState([]);
     const [profiles, setProfiles] = useState([]);
-    const [forums, setForums] = useState([]);
-    const [topics, setTopics] = useState([]);
+    const [forum, setForum] = useState({});
+    const [branchTopics, setBranchTopics] = useState({
+        branch: {},
+        topics: [],
+    });
     const [comments, setComments] = useState([]);
     const [images, setImages] = useState([]);
+
+    const { branch, topics, } = branchTopics;
     
     useEffect(() => {
         const fetchStuff = async () => {
             try {
-                const fetchedUsers = await userService.index();
-                console.log(fetchedUsers);
-                setUsers([...fetchedUsers]);
-                
                 const fetchedProfiles = await profileService.index();
                 console.log(fetchedProfiles);
                 setProfiles([...fetchedProfiles]);
                 
-                const fetchedBranches = await forumService.index();
-                console.log(fetchedBranches);
-                setForums([...fetchedBranches]);
+                // const fetchedForum = await forumService.branch(params.branchName);
+                // console.log(fetchedForum);
+                // setForum({...fetchedForum});
                 
-                const fetchedTopics = await topicService.index();
+                const fetchedTopics = await topicService.branch(params.branchName);
                 console.log(fetchedTopics);
-                setTopics([...fetchedTopics]);
+                setBranchTopics({...fetchedTopics});
                 
                 const fetchedComments = await commentService.index();
                 console.log(fetchedComments);
                 setComments([...fetchedComments]);
                 
                 const fetchedImages = await imageService.index();
-                console.log(fetchedImages);
+                // console.log(fetchedImages);
                 setImages([...fetchedImages]);
                 
             } catch (err) {
@@ -55,42 +56,56 @@ const Forums = ({props}) => {
         
         fetchStuff();
         
-    }, [user])
-    
-    const forum = (forums.find(({name}) => name === params.branchName));
+    }, [user]);
 
     return (
         <main>
-            {forums.map(forum => (
-                forum.name === params.branchName ? (
-                    <>
-                    {forum.name}
-                    <br />
-                    <ul className="nodots">
-                    {(topics.filter(({forumName}) => forumName === params.branchName)).map(topic => (
-                        <li className="bordered padded">
-                            <div>
-                                <Link to={`/forums/${topic.forumName}/${topic._id}`}>
-                                    <h4>
-                                        {topic.title}
-                                    </h4>
-                                </Link>
-                            </div>
-                        </li>
-                    ))}
-                    </ul>
-                    <>
-
-                    </>
-                    <br />
-                    <Link to='/topics/new' >
-                        Create Topic Here
-                    </Link>
-                    </>
-                ) : (
-                    <></>
-                )
+            {branch.name}
+            <br />
+            <ul className="nodots no-center-text">
+            {topics.map(topic => (
+                <li className="bordered padded" key={topic._id}>
+                    <div className="top-box" >
+                        <div className="av-box bordered author go-left">
+                            <Link to={(`/profiles/${getSomeId(topic.userId,profiles).displayName}/${topic.userId}`)}>
+                                <h4>
+                                    <img className="avatar" src={getSomeId(topic.userId,profiles).avatar} />
+                                    {getSomeId(topic.userId,profiles).displayName}
+                                </h4>
+                            </Link>
+                        </div>
+                        <Link to={`/forums/${params.branchName}/${topic._id}`} >
+                            <h3 className="no-top">
+                                &nbsp; {topic.title}
+                            </h3>
+                            <br />
+                        </Link>
+                        {comments.map(comment => (
+                            <>
+                            {comment.topicId === topic._id ? (
+                                <>
+                                {comment.isTopicBody ? (
+                                    <>
+                                    {comment.body}
+                                    </>
+                                ) : (
+                                    <>
+                                    
+                                    </>
+                                )}
+                                </>
+                            ) : (<></>)}
+                            </>
+                        ))
+                        }
+                    </div>
+                </li>
             ))}
+            </ul>
+            <br />
+            <Link to='/topics/new' >
+                Create Topic Here
+            </Link>
         </main>
     )
 }

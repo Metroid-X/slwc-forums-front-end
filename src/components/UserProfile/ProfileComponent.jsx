@@ -10,81 +10,88 @@ import * as topicService from '../../services/topicService';
 import * as commentService from '../../services/commentService';
 
 
-const ProfileComponent = ({props,profileId,userName}) => {
-    // const params = useParams();
+const ProfileComponent = ({props}) => {
+    const params = useParams();
     const { user } = useContext(UserContext);
     const [users, setUsers] = useState([]);
-    const [profiles, setProfiles] = useState([]);
-    const forums = props.forums
-    const topics = props.topics
-    const comments = props.comments
-    const images = props.images
+    const [profile, setProfile] = useState({});
+    const [topics, setTopics] = useState([]);
+    const [comments, setComments] = useState([]);
+    const [images, setImages] = useState([]);
+
+
 
     useEffect(() => {
-        const fetchUsers = async () => {
+       
+        const fetchStuff = async () => {
             try {
-                const fetchedUsers = await userService.index();
-                console.log(fetchedUsers);
-                setUsers([...fetchedUsers]);
+
+                const fetchedTopics = await topicService.index();
+                console.log(fetchedTopics);
+                setTopics([...fetchedTopics]);
+
+                const fetchedComments = await commentService.index();
+                console.log(fetchedComments);
+                setComments([...fetchedComments]);
+
+                const fetchedDisplay = await profileService.userprofile(params.profileId);
+                console.log(fetchedDisplay);
+                setProfile({...fetchedDisplay});
+
             } catch (err) {
                 console.log(err);
             }
         };
 
-
-        const fetchProfiles = async () => {
-            try {
-                const fetchedProfiles = await profileService.index();
-                console.log(fetchedProfiles);
-                setProfiles([...fetchedProfiles]);
-            } catch (err) {
-                console.log(err);
-            }
-        };
-
-        if (user) { fetchUsers(); fetchProfiles();};
+        fetchStuff();
 
 
-    }, [user]);
-
+    }, []);
 
     return (
-        <div>
-            Profile Id: {profileId}
-            <div className="av-box bordered">
-                {profiles.map(profile => (<>{users.map(user => (<>
-                    {(user.username === userName && user._id === profile.userId) ? (
-                        <>
-                        <h4>
-                            <img className="avatar" src={profile.avatar}  />
-                            {profile.profileCompleted ? 
-                            (<>{profile.displayName}</>
-                            ):(<>{user.username}</>)}
-                            <sup className="go-right un-header">Followers: {(profile.followers)?(
-                                <>{profile.followers.length}</>
-                                ):(<>0</>)}
-                                &nbsp;&nbsp;-&nbsp;&nbsp;Following: {(profile.following)?(
-                                    <>{profile.followers.length}</>
-                                ):(<>0</>)}
-                            </sup>
-                            <br/>
-                            <span className="un-header">
-                                <sup>|&nbsp;&nbsp;Topics: {
-                                    topics.filter(topic => topic.userId === profileId).length
-                                }&nbsp;&nbsp;</sup> 
-                                <sup>|&nbsp;&nbsp;Comments: {
-                                    comments.filter(comment => comment.userId === profileId).length
-                                }&nbsp;&nbsp;</sup>
-                                <sup>|&nbsp;&nbsp;Images: {
-                                    images.filter(image => image.userId === profileId).length
-                                }&nbsp;&nbsp;|</sup>
-                            </span>
-                        </h4>
-                        </>
-                    ):(<></>)}
-                </>))}</>))}
+        <main>
+            {/* Profile Id: {params.profileId} */}
+            <div className="av-box bordered padded">
+                Options:
+                {(profile._id === user.profile) ? (
+                    <>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <Link>edit your profile</Link>
+                    </>
+                ) : (
+                    <>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    .  .  .
+                    </>
+                )}
             </div>
-        </div>
+            <hr />
+            <div className="av-box bordered">
+                <h4>
+                    <img className="avatar" src={profile.avatar}  />
+                    {profile.displayName}
+                    <sup className="go-right un-header">Followers: {(profile.followers)?(
+                        <>{profile.followers.length}</>
+                        ):(<>0</>)}
+                        &nbsp;&nbsp;-&nbsp;&nbsp;Following: {(profile.following)?(
+                            <>{profile.followers.length}</>
+                        ):(<>0</>)}
+                    </sup>
+                    <br/>
+                    <span className="un-header">
+                        <sup>|&nbsp;&nbsp;Topics: {
+                            topics.filter(topic => topic.userId === profile._id).length
+                        }&nbsp;&nbsp;</sup> 
+                        <sup>|&nbsp;&nbsp;Comments: {
+                            comments.filter(comment => comment.userId === profile._id && comment.isTopicBody === false).length
+                        }&nbsp;&nbsp;</sup>
+                        <sup>|&nbsp;&nbsp;Images: {
+                            images.filter(image => image.userId === profile._id).length
+                        }&nbsp;&nbsp;|</sup>
+                    </span>
+                </h4>
+            </div>
+        </main>
     );
 };
 
