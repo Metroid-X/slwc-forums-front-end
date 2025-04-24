@@ -33,7 +33,7 @@ const SearchTags = ({props, getSomeId, searchbar}) => {
                 
                 handleForum(params.branchName);
                 
-                const fetchedTopics = await forumService.search();
+                const fetchedTopics = await forumService.search(params.tags?params.tags.replaceAll('+',' '):null);
                 console.log(fetchedTopics);
                 setTopics([...fetchedTopics]);
                 
@@ -58,7 +58,7 @@ const SearchTags = ({props, getSomeId, searchbar}) => {
     
     const [formData, setFormData] = useState({
         q: '',
-        t: params.tags,
+        t: params.tags?(params.tags):(null),
     });
 
     const { q, t, } = formData;
@@ -66,6 +66,12 @@ const SearchTags = ({props, getSomeId, searchbar}) => {
     const handleChange = (evt) => {
         setMessage('');
         setFormData({...formData, [evt.target.name]: evt.target.value });
+    }
+
+    const handleTag = async (evt) => {
+        evt.preventDefault()
+        const searchResult = await forumService.search(formData.t);
+        setTopics(searchResult);
     }
 
     const handleSubmit = async (evt) => {
@@ -143,6 +149,7 @@ const SearchTags = ({props, getSomeId, searchbar}) => {
                                         key={tag} 
                                         className="tag"
                                         to={`/forum/search/${tag}`}
+                                        onClick={() => {window.location.href=`/forum/search/${tag}`;}}
                                     >
                                         {tag}
                                     </Link>
