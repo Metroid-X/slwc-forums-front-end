@@ -12,15 +12,16 @@ import * as forumService from '../../services/forumService';
 import * as topicService from '../../services/topicService';
 import * as commentService from '../../services/commentService';
 
-const NavBar = () => {
+const NavBar = ({props}) => {
     const params = useParams();
     const navigate = useNavigate();
     const { user } = useContext(UserContext);
     const [users, setUsers] = useState([]);
     const [profiles, setProfiles] = useState([]);
     const [forums, setForums] = useState([]);
-    // const [topics, setTopics] = useState([]);
-    // const [comments, setComments] = useState([]);
+    const [branchName, setBranchName] = useState(``);
+
+    const { forum, handleForum, } = props
 
     const handleSignOut = () => {
         localStorage.removeItem('token');
@@ -29,33 +30,12 @@ const NavBar = () => {
 
     useEffect(() => {
 
-        const fetchTrustedStuff = async () => {
-            try {
-                const fetchedUsers = await userService.index();
-                // console.log(fetchedUsers);
-                setUsers([...fetchedUsers]);
-
-                const fetchedProfiles = await profileService.index();
-                // console.log(fetchedProfiles);
-                setProfiles([...fetchedProfiles]);
-            } catch (err) {
-                console.log(err);
-            }
-        }
-
         const fetchStuff = async () => {
             try {
                 const fetchedBranches = await forumService.index();
                 // console.log(fetchedBranches);
                 setForums([...fetchedBranches]);
                 
-                // const fetchedTopics = await topicService.index();
-                // console.log(fetchedTopics);
-                // setTopics([...fetchedTopics]);
-                
-                // const fetchedComments = await commentService.index();
-                // console.log(fetchedComments);
-                // setComments([...fetchedComments]);
             } catch (err) {
                 console.log(err);
             }
@@ -73,28 +53,44 @@ const NavBar = () => {
             <nav className="bordered">
                 <Link to='/' 
                     className="bordered padded margined forum-directory"
-                >Home</Link>
+                >
+                    Home
+                </Link>
                 <Link to='/users' 
                     className="bordered padded margined forum-directory"
-                >User-List</Link>
-                <Link to='/topics/new' 
-                    className="bordered padded margined forum-directory"
-                >Create New Topic</Link>
+                >
+                    User-List
+                </Link>
                 <Link to='/' 
                     className="bordered padded margined forum-directory"
-                 onClick={handleSignOut}>Sign Out</Link>
+                    onClick={handleSignOut}
+                 >
+                    Sign Out
+                 </Link>
+                <Link to='/forum/search' 
+                    className="bordered padded margined forum-directory"
+                >
+                    Forum Search
+                </Link>
             </nav>
         ) : (
             <nav className="bordered">
                 <Link to='/' 
                     className="bordered padded margined forum-directory"
-                >Home</Link>
+                    onClick={() => {window.location.href=`/`;}}
+                >
+                    Home
+                </Link>
                 <Link to='/sign-up' 
                     className="bordered padded margined forum-directory"
-                >Sign Up</Link>
+                >
+                    Sign Up
+                </Link>
                 <Link to='/sign-in' 
                     className="bordered padded margined forum-directory"
-                >Sign In</Link>
+                >
+                    Sign In
+                </Link>
             </nav>
         )}
         <hr />
@@ -102,7 +98,7 @@ const NavBar = () => {
             {forums.map(forum => (
                 <Link to={`/forums/${forum.name}`} key={forum.name}
                 className="bordered padded margined forum-directory"
-                onClick={() => {window.location.href=`/forums/${forum.name}`}}
+                onClick={() => {window.location.href=`/forums/${forum.name}`;}}
                 type="button"
                 >
                     <div>

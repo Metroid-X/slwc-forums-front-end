@@ -29,18 +29,19 @@ const EditTopicForum = ({props, getSomeId}) => {
         profile: {},
         bodyComment: {},
     });
-
+    
     const { branch, topic, topicComments, profile, bodyComment } = branchTopic;
+    
+    const { forum, handleForum, } = props;
+    
+    const [formData, setFormData] = useState({
+        title: topic.title,
+        description: topic.description,
+        linkedImages: String(topic.linkedImages),
+        tags: '',
+    });
 
     useEffect(() => {
-
-        const fetchTrustedStuff = async () => {
-            try {
-                
-            } catch (err) {
-                console.log(err);
-            }
-        }
 
         const fetchStuff = async () => {
             try {
@@ -68,6 +69,15 @@ const EditTopicForum = ({props, getSomeId}) => {
                 console.log(fetchedTopic);
                 setTopic({...fetchedTopic});
                 
+                handleForum(params.branchName);
+
+                setFormData({
+                    title: fetchedTopic.title,
+                    description: fetchedTopic.description,
+                    linkedImages: String(topic.linkedImages),
+                    tags: fetchedTopic.tags,
+                })
+
             } catch (err) {
                 console.log(err);
             }
@@ -77,14 +87,7 @@ const EditTopicForum = ({props, getSomeId}) => {
 
     }, [user])
     
-    const [formData, setFormData] = useState({
-        title: topic.title,
-        bodyContent: (bodyComment.body),
-        linkedImages: (bodyComment.linkedImages),
-        tags: '',
-    });
-
-    const { title, linkedImages, bodyContent, } = formData;
+    const { title, bodyContent, linkedImages, tags, } = formData;
 
     const handleChange = (evt) => {
         setMessage('');
@@ -107,8 +110,11 @@ const EditTopicForum = ({props, getSomeId}) => {
     };
 
     console.log(formData);
+    console.log(formData);
 
     return (
+        <>
+        <title>Edit Topic</title>
         <main className="form">
             <p>{message}</p>
             <form onSubmit={handleSubmit}>
@@ -117,8 +123,8 @@ const EditTopicForum = ({props, getSomeId}) => {
                     <input 
                         type='text'
                         id='title'
-                        defaultValue={topic.title}
                         value={title}
+                        defaultValue={topic.title}
                         name='title'
                         onChange={handleChange}
                         onClick={handleChange}
@@ -126,12 +132,24 @@ const EditTopicForum = ({props, getSomeId}) => {
                     />
                 </div>
                 <div className="field">
-                    <label htmlFor="bodyContent">*Body:</label>
+                    <label htmlFor="tags">Tags:</label>
+                    <input 
+                        type='text'
+                        id='tags'
+                        value={tags}
+                        defaultValue={topic.tags}
+                        name='tags'
+                        onChange={handleChange}
+                    />
+                    <sup>*Separate tags with spaces</sup>
+                </div>
+                <div className="field">
+                    <label htmlFor="desc">*Description:</label>
                     <textarea 
-                        id='bodyContent'
-                        defaultValue={bodyComment.body}
-                        value={bodyContent}
-                        name='bodyContent'
+                        id='desc'
+                        value={desc}
+                        defaultValue={topic.description}
+                        name='desc'
                         onChange={handleChange}
                         onClick={handleChange}
                         required
@@ -159,6 +177,7 @@ const EditTopicForum = ({props, getSomeId}) => {
                 </div>
             </form>
         </main>
+        </>
     );
 }
 

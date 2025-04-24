@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect } from 'react';
-import { Routes, Route, useParams } from 'react-router';
+import { Routes, Route, useSearchParams } from 'react-router';
 
 import NavBar from './components/NavBar/NavBar';
 import Forums from './components/Forums/Forums';
@@ -11,14 +11,14 @@ import SignInForm from './components/SignInForm/SignInForm';
 import Landing from './components/Landing/Landing';
 import Dashboard from './components/Dashboard/Dashboard';
 import UserProfile from './components/UserProfile/UserProfile';
-import ProfileComponent from './components/UserProfile/ProfileComponent';
+
+import SearchTags from './components/Searches/SearchTags';
 
 import * as userService from './services/userService';
 import * as profileService from './services/profileService';
 import * as forumService from './services/forumService';
 import * as topicService from './services/topicService';
 import * as commentService from './services/commentService';
-import * as imageService from './services/imageService';
 
 import { UserContext } from './contexts/UserContext';
 
@@ -27,57 +27,60 @@ import './App.css'
 
 const App = () => {
   const { user } = useContext(UserContext);
-  const params = useParams();
+  const params = useSearchParams();
   const [users, setUsers] = useState([]);
   const [profiles, setProfiles] = useState([]);
   const [userProfile, setUserProfile] = useState({});
   const [forums, setForums] = useState([]);
+  const [forum, setForum] = useState({});
   const [topics, setTopics] = useState([]);
   const [comments, setComments] = useState([]);
-  const [images, setImages] = useState([]);
   
   useEffect(() => {
     const fetchStuff = async () => {
       try {
 
         const fetchedProfiles = await profileService.index();
-        console.log(fetchedProfiles);
+        // console.log(fetchedProfiles);
         setProfiles([...fetchedProfiles]);
 
         const fetchedUserProfile = await profileService.userprofile(user.profile);
-        console.log(fetchedUserProfile);
+        // console.log(fetchedUserProfile);
         setUserProfile({...fetchedUserProfile});
 
         const fetchedUsers = await userService.index();
-        console.log(fetchedUsers);
+        // console.log(fetchedUsers);
         setUsers([...fetchedUsers]);
         
         const fetchedForums = await forumService.index();
-        console.log(fetchedForums);
+        // console.log(fetchedForums);
         setForums([...fetchedForums]);
 
         const fetchedTopics = await topicService.index();
-        console.log(fetchedTopics);
+        // console.log(fetchedTopics);
         setTopics([...fetchedTopics]);
 
         const fetchedComments = await commentService.index();
-        console.log(fetchedComments);
+        // console.log(fetchedComments);
         setComments([...fetchedComments]);
         
-        const fetchedImages = await imageService.index();
-        console.log(fetchedImages);
-        setImages([...fetchedImages]);
-
       } catch (err) {
         console.log(err);
       };
     };
+
     fetchStuff();
   },[]);
 
-  const props = { users:users, profiles:profiles, forums:forums, topics:topics, comments:comments, images:images };
+  const handleForum = async (name) => {
+    // const fetchedForum = await forumService.branch(name)?forumService.branch(name):{name:''};
+    // console.log(fetchedForum);
+    // setForum({...fetchedForum});
+  };
 
-  const getSomeId = (id,elem,key=undefined) => {
+  const props = { users, profiles, forums, topics, comments, forum, handleForum, };
+
+  const getSomeId = (id,elem) => {
     return elem.find(({_id}) => _id === id);
   };
 
@@ -86,14 +89,17 @@ const App = () => {
     <div>
       {userProfile?(<>Hello, {userProfile.displayName}</>):(<>Hello, Guest</>)}.
     </div>
-      <NavBar />
+      <NavBar props={props} />
       <Routes>
-        <Route path='/' element={ <Landing props={props} />} />
-        <Route path='/users' element={ user ? <Dashboard props={props} /> : <Landing props={props} /> } />
+        <Route path='/' element={ <SearchTags props={props} getSomeId={getSomeId} searchbar={false} />} />
+        <Route path='/users' element={ user ? <Dashboard props={props} /> : <SearchTags props={props} getSomeId={getSomeId} /> } />
         <Route path='/sign-up' element={<SignUpForm />} />
         <Route path='/sign-in' element={<SignInForm />} />
         <Route path='/profiles/:userName/:profileId' element={<UserProfile props={props}/>} />
         <Route path='/topics/new' element={<NewTopicForm props={props} getSomeId={getSomeId} />} />
+        <Route path='/forum/search' element={<SearchTags props={props} getSomeId={getSomeId} searchbar={true} />} />
+        <Route path='/forum/search/:tags' element={<SearchTags props={props} getSomeId={getSomeId} searchbar={true} />} />
+        <Route path='/forums/:branchName/new' element={<NewTopicForm props={props} getSomeId={getSomeId} />} />
         <Route path='/forums/:branchName' element={<Forums props={props} getSomeId={getSomeId} />} />
         <Route path='/forums/:branchName/:topicId' element={<Topics props={props} getSomeId={getSomeId} />} />
         <Route path='/forums/:branchName/:topicId/edit' element={<EditTopicForm props={props} getSomeId={getSomeId} />} />

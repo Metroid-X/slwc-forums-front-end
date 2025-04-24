@@ -11,7 +11,7 @@ import * as forumService from '../../services/forumService';
 import * as topicService from '../../services/topicService';
 import * as commentService from '../../services/commentService';
 
-const NewTopicForm = () => {
+const NewTopicForm = ({props}) => {
     let params = useParams();
     const navigate = useNavigate();
 
@@ -19,41 +19,50 @@ const NewTopicForm = () => {
     const [users, setUsers] = useState([]);
     const [profiles, setProfiles] = useState([]);
     const [forums, setForums] = useState([]);
+    const [branch, setBranch] = useState({});
     const [topics, setTopics] = useState([]);
     const [comments, setComments] = useState([]);
     const [message, setMessage] = useState('');
 
-    useEffect(() => {
+    const { forum, handleForum, } = props;
 
-        const fetchTrustedStuff = async () => {
-            try {
-                
-            } catch (err) {
-                console.log(err);
-            }
-        }
+    useEffect(() => {
 
         const fetchStuff = async () => {
             try {
                 const fetchedUsers = await userService.index();
-                console.log(fetchedUsers);
+                // console.log(fetchedUsers);
                 setUsers([...fetchedUsers]);
 
                 const fetchedProfiles = await profileService.index();
-                console.log(fetchedProfiles);
+                // console.log(fetchedProfiles);
                 setProfiles([...fetchedProfiles]);
 
                 const fetchedBranches = await forumService.index();
-                console.log(fetchedBranches);
+                // console.log(fetchedBranches);
                 setForums([...fetchedBranches]);
                 
                 const fetchedTopics = await topicService.index();
-                console.log(fetchedTopics);
+                // console.log(fetchedTopics);
                 setTopics([...fetchedTopics]);
                 
                 const fetchedComments = await commentService.index();
-                console.log(fetchedComments);
+                // console.log(fetchedComments);
                 setComments([...fetchedComments]);
+
+                const fetchedBranch = await forumService.newTopic(params.branchName);
+                // console.log(fetchedBranch);
+                setBranch({...fetchedBranch});
+                
+                handleForum(params.branchName);
+
+                setFormData({ ...formData, forumName: (
+                    params.branchName!=='undecided'&&forumName===''
+                )?(
+                    params.branchName
+                ):(
+                    forumName
+                ) })
 
             } catch (err) {
                 console.log(err);
@@ -63,22 +72,25 @@ const NewTopicForm = () => {
         fetchStuff();
 
     }, [user])
-    
+
     const [formData, setFormData] = useState({
-        _user: user,
-        _profile: user.profile,
         title: '',
-        bodyContent: '',
-        forumName: params.branchName?(params.branchName):(''),
+        desc: '',
+        forumName: branch?.name?(branch.name):(''),
         linkedImages: '',
         tags: '',
     });
 
-    const { _user, title, forumName, linkedImages, bodyContent, tags, } = formData;
+    const { title, forumName, linkedImages, desc, tags, } = formData;
 
     const handleChange = (evt) => {
         setMessage('');
         setFormData({ ...formData, [evt.target.name]: evt.target.value });
+        console.log(formData)
+        if (forumName!==params.branchName) {
+            console.log(forumName);
+            navigate(`/forums/${forumName===''?(params.branchName):(forumName)}/new`, { replace: true });
+        };
     };
 
     // setFormData({...formData, name: currentForum.name})
@@ -95,12 +107,12 @@ const NewTopicForm = () => {
     }
 
     const isFormInvalid = () => {
-        return !(forumName && title && bodyContent);
+        return !(forumName && title && desc);
     };
 
-    console.log(formData)
-
     return (
+        <>
+        <title>New Topic</title>
         <main className="form">
             <p>{message}</p>
             <form onSubmit={handleSubmit}>
@@ -110,11 +122,12 @@ const NewTopicForm = () => {
                         type='text'
                         id='branch'
                         name='forumName'
-                        defaultValue={forumName}
+                        
                         onChange={handleChange}
+                        onClick={handleChange}
                         required
                     >
-                        {(params.branchName)?(
+                        {(params.branchName!=='undecided')?(
                             <option value={params.branchName} >
                                 {(params.branchName).split('-').map(seg => (
                                     <>
@@ -170,11 +183,11 @@ const NewTopicForm = () => {
                     <sup>*Separate tags with spaces</sup>
                 </div>
                 <div className="field">
-                    <label htmlFor="bodyContent">*Body:</label>
+                    <label htmlFor="desc">*Description:</label>
                     <textarea 
-                        id='bodyContent'
-                        value={bodyContent}
-                        name='bodyContent'
+                        id='desc'
+                        value={desc}
+                        name='desc'
                         onChange={handleChange}
                         required
                     />
@@ -199,6 +212,7 @@ const NewTopicForm = () => {
                 </div>
             </form>
         </main>
+        </>
     );
 }
 

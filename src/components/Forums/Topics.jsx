@@ -11,21 +11,20 @@ import * as forumService from '../../services/forumService';
 import * as topicService from '../../services/topicService';
 import * as commentService from '../../services/commentService';
 
-const Topics = () => {
+const Topics = ({props}) => {
     let params = useParams();
     const { user } = useContext(UserContext);
-    const [users, setUsers] = useState([]);
     const [profiles, setProfiles] = useState([]);
-    const [forums, setForums] = useState([]);
     const [branchTopic, setTopic] = useState({
         branch: {},
         topic: {},
         topicComments: [],
         profile: {},
-        bodyComment: {},
+        topicTags: [],
     });
-    const [comments, setComments] = useState([]);
 
+    const { forum, handleForum, } = props;
+    
     useEffect(() => {
 
         const fetchStuff = async () => {
@@ -34,14 +33,12 @@ const Topics = () => {
             console.log(fetchedProfiles);
             setProfiles([...fetchedProfiles]);
             
-            const fetchedForums = await forumService.index();
-            console.log(fetchedForums);
-            setForums([...fetchedForums]);
-            
             const fetchedTopic = await topicService.branchTopic(params.branchName, params.topicId);
             console.log(fetchedTopic);
             setTopic({...fetchedTopic});
             
+            handleForum(params.branchName);
+
         }
         fetchStuff();
             
@@ -60,26 +57,50 @@ const Topics = () => {
         }
     };
     
-    const { branch, topic, topicComments, profile, bodyComment, } = branchTopic
+    const { branch, topic, topicComments, profile, topicTags } = branchTopic
 
     return (
         <main className="margined no-center-text">
+            <title>{topic.title}</title>
             <div className="bordered padded">
                 <div className="bordered padded margined">
-                    Options:
-                    {(topic.userId === user.profile) ? (
-                        <>
-                        &nbsp;&nbsp;
-                        <Link to={`/forums/${params.branchName}/${params.topicId}/edit`}>edit this topic</Link>
-                        &nbsp;&nbsp;|&nbsp;&nbsp;
-                        <Link onClick={() => handleDeleteTopic(topic._id)} to={`/forums/${params.branchName}`}>delete this topic</Link>
-                        </>
-                    ) : (
-                        <>
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-                        this isn't your topic
-                        </>
-                    )}
+                    <div className="opts">
+                        Options:
+                        {(topic.userId === user.profile) ? (
+                            <>
+                            &nbsp;&nbsp;
+                            <Link 
+                                to={`/forums/${params.branchName}/${params.topicId}/edit`}
+                                className="bttn-link"
+                            >
+                                edit this topic
+                            </Link>
+                            &nbsp;&nbsp;|&nbsp;&nbsp;
+                            <details>
+                                <span className="open">
+                                    ARE YOUR SURE?
+                                </span>
+                                <summary>
+                                    <span className="closed">
+                                        Delete This Topic
+                                    </span>
+                                </summary>
+                                &nbsp;&nbsp;|&nbsp;&nbsp;
+                                <Link
+                                    onClick={() => handleDeleteTopic(topic._id)}
+                                    to={`/forums/${params.branchName}`}
+                                >
+                                    delete this topic
+                                </Link>
+                            </details>
+                            </>
+                        ) : (
+                            <>
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            this isn't your topic
+                            </>
+                        )}
+                    </div>
                 </div>
                 <div className="bordered padded margined top-box">
                     <div className="av-box bordered author go-left">
@@ -95,14 +116,29 @@ const Topics = () => {
                     <h3 className="no-top">
                         &nbsp; {topic.title}
                     </h3>
+                    <p className="under-top">
+                        &nbsp;&nbsp;
+                        <span className="bordered tags">
+                            tags:
+                            {topicTags?.map(tag=>(
+                                <Link 
+                                    key={tag} 
+                                    className="tag"
+                                    to={`/forum/search/${tag}`}
+                                >
+                                    {tag}
+                                </Link>
+                            ))}
+                        </span>
+                    </p>
                 </div>
                 
                 <div className="padded margined">
                     <div className="bordered padded margined">
-                        {bodyComment.body}
-                        {(bodyComment.linkedImages)?(
+                        {topic.description}
+                        {(topic.linkedImages)?(
                             <>
-                                {bodyComment.linkedImages?.map(imgURL => (
+                                {topic.linkedImages?.map(imgURL => (
                                     <>{imgURL?(<img key={imgURL} src={imgURL}/>):(null)}</>
                                 ))}
                             </>
@@ -110,6 +146,20 @@ const Topics = () => {
                             <></>
                         )}
                     </div>
+                    {topicComments?.map(comment=>(
+                        <div className="bordered padded margined">
+                            {comment.body}
+                            {(comment.linkedImages)?(
+                                <>
+                                    {comment.linkedImages?.map(imgURL => (
+                                        <>{imgURL?(<img key={imgURL} src={imgURL}/>):(null)}</>
+                                    ))}
+                                </>
+                            ):(
+                                <></>
+                            )}
+                        </div>
+                    ))}
                 </div>
             </div>
         </main>

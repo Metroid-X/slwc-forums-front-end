@@ -1,5 +1,6 @@
+
 import { useEffect, useContext, useState } from "react";
-import { Link, useParams } from "react-router";
+import { Link, useNavigate, useParams as useSearchParams, } from "react-router";
 
 import { UserContext } from "../../contexts/UserContext";
 
@@ -9,20 +10,17 @@ import * as forumService from '../../services/forumService';
 import * as topicService from '../../services/topicService';
 import * as commentService from '../../services/commentService';
 
-const Forums = ({props, getSomeId}) => {
-    let params = useParams();
+const SearchTags = ({props, getSomeId, searchbar}) => {
+    let params = useSearchParams();
+    const navigate = useNavigate();
     const { user } = useContext(UserContext);
     
     const [users, setUsers] = useState([]);
     const [profiles, setProfiles] = useState([]);
-    // const [forum, setForum] = useState({});
-    const [branchTopics, setBranchTopics] = useState({
-        branch: {},
-        topics: [],
-    });
+    const [message, setMessage] = useState('');
+    const [topics, setTopics] = useState([]);
     const [comments, setComments] = useState([]);
-
-    const { branch, topics, } = branchTopics;
+    const [forums, setForums] = useState([]);
 
     const { forum, handleForum, } = props;
     
@@ -35,9 +33,13 @@ const Forums = ({props, getSomeId}) => {
                 
                 handleForum(params.branchName);
                 
-                const fetchedTopics = await topicService.branch(params.branchName);
+                const fetchedTopics = await forumService.search();
                 console.log(fetchedTopics);
-                setBranchTopics({...fetchedTopics});
+                setTopics([...fetchedTopics]);
+                
+                const fetchedForums = await forumService.index();
+                console.log(fetchedForums);
+                setForums([...fetchedForums]);
                 
                 const fetchedComments = await commentService.index();
                 console.log(fetchedComments);
@@ -53,9 +55,68 @@ const Forums = ({props, getSomeId}) => {
         
     }, [user]);
 
+    
+    const [formData, setFormData] = useState({
+        q: '',
+        t: params.tags,
+    });
+
+    const { q, t, } = formData;
+
+    const handleChange = (evt) => {
+        setMessage('');
+        setFormData({...formData, [evt.target.name]: evt.target.value });
+    }
+
+    const handleSubmit = async (evt) => {
+        evt.preventDefault();
+        try {
+            const searchResult = await forumService.search(formData.t);
+            setTopics(searchResult);
+            navigate(`/forum/search/${formData.t.replaceAll(' ','+')}`);
+        } catch (err) {
+            setMessage(err.message);
+        }
+    }
+
+    console.log(formData)
+
     return (
         <main>
-            <title>{branch.name}</title>
+            <title>Search</title>
+
+            {searchbar?(
+                <form onSubmit={handleSubmit} id="search-bar" className="bordered padded">
+                    {/* <div className="margined padded">
+                        <label htmlFor="q">Search by Name: &nbsp;</label> 
+                        <input 
+                            id="q"
+                            value={q}
+                            type="text" 
+                            name="q"
+                            onChange={handleChange}
+                        /> &nbsp; 
+                    </div> */}
+                    <div className="margined padded">
+                        <label htmlFor="t">Search by Tags: &nbsp;</label>
+                        <input 
+                            id="t"
+                            defaultValue={params.tags}
+                            type="text" 
+                            name="t"
+                            onChange={handleChange}
+                        /> &nbsp;
+                    </div> 
+                    <div className="submit go-right">
+                        <button onClick={handleSubmit}>Search</button>
+                    </div>
+                </form>
+            ):(
+                <>
+                no search
+                </>
+            )}
+
             <ul className="nodots no-center-text">
             {topics.map(topic => (
                 <li className="bordered padded" key={topic._id}>
@@ -69,12 +130,11 @@ const Forums = ({props, getSomeId}) => {
                             </Link>
                         </div>
                         <h3 className="no-top">
-                        <Link to={`/forums/${params.branchName}/${topic._id}`} >
-                            
+                        <Link to={`/forums/${topic.forumName}/${topic._id}`} >
                                 &nbsp; {topic.title}
                         </Link>
                         </h3>
-                        <div className="under-top">
+                        <p className="under-top">
                             &nbsp;&nbsp;
                             <span className="bordered tags">
                                 tags:
@@ -88,18 +148,21 @@ const Forums = ({props, getSomeId}) => {
                                     </Link>
                                 ))}
                             </span>
-                        </div>
-                        <p>
-                            {topic.description}
                         </p>
+                        {topic.description}
                     </div>
+                    <sub className="faded">
+                        Posted in <Link to={`/forums/${topic.forumName}`}>
+                        {forums.find(({_id}) => _id === topic.forumId )?.name}
+                        </Link>
+                    </sub>
                 </li>
             ))}
             </ul>
             <br />
             {user?(
-                <Link to={`/forums/${params.branchName}/new`} >
-                    Create Topic Here
+                <Link to='/forums/undecided/new' className="" >
+                    Create New Topic Here
                 </Link>
             ):(
                 <></>
@@ -109,4 +172,5 @@ const Forums = ({props, getSomeId}) => {
 }
 
 
-export default Forums;
+
+export default SearchTags;

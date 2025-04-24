@@ -38,7 +38,75 @@ const branch = async (branchName) => {
     }
 };
 
+const newTopic = async (branchName) => {
+    try {
+
+        const res = await fetch(`${BASE_URL}/${branchName}/for-new-topic`);
+
+        const data = await res.json();
+
+        if (data.err) {
+            throw new Error(data.err);
+        };
+
+        return data;
+
+    } catch (err) {
+        console.log(err);
+        throw new Error(err);
+    }
+}
+
+const search = async (tagQ=null,textQ=null) => {
+    try {
+
+        const query = textQ?textQ.split(' '):null;
+        
+        const tags = tagQ?tagQ.split(' '):null;
+
+        const res = await fetch(`${BASE_URL}/search/query${
+            query||tags?(
+                '?'
+            ):(
+                ''
+            )
+        }${
+            query?.length?(
+                `q=${query[0]}${query.slice(1)?.map(part=>(`+${part}`))}`
+            ):(
+                ''
+            )
+        }${
+            query&&tags?(
+                `&`
+            ):(
+                ``
+            )
+        }${
+            tags?.length?(
+                `t=${tags[0]}${tags.slice(1)?.map(tag=>(`+${tag}`))}`
+            ):(
+                ''
+            )
+        }`);
+
+        const data = await res.json();
+
+        if (data.err) {
+            throw new Error(data.err);
+        };
+
+        return data;
+
+    } catch (err) {
+        console.log(err);
+        throw new Error(err);
+    }
+}
+
 export {
     index,
     branch,
+    newTopic,
+    search,
 };

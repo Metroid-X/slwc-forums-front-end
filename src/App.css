@@ -17,6 +17,95 @@
   margin-top: 0;
 }
 
+span.tags {
+  padding: 2px 0 4px 4px ;
+  background-color: rgb(35, 44, 51);
+  border-color: rgb(52, 61, 68);
+  border-radius: 9px;
+}
+
+.tag {
+  border-radius: 5px;
+  margin: 4px;
+  font-size: 80%;
+  color: lightslategrey;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 1px 5px 3px;
+  vertical-align: 1px;
+  font-weight: normal;
+}
+.tag:hover {
+  color: steelblue;
+}
+
+.under-top {
+  margin-top: -15px;
+}
+
+.bttn-link {
+  outline: 2px solid black;
+  padding: 0 4px;
+  border-radius: 4px;
+}
+
+.faded {
+  color: lightslategrey;
+  a {
+    color: lightslategrey;
+  }
+  a:hover {
+    color: steelblue;
+  }
+}
+
+.opts {
+  margin: 4px;
+  display: flex;
+  details {
+    display: flex;
+    user-select: none;
+    summary::after{
+      content: '';
+      margin-left: 8px;
+    }
+    summary {
+      outline: 2px solid black;
+      padding: 0 4px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  }
+  
+  details[open] {
+    span.closed {
+      display: none;
+    }
+    summary::after {
+      transform: rotate(0deg);
+      content: 'Nevermind';
+      transform: translate(122px, 0);
+      outline: 2px solid black;
+      padding: 0 4px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    summary {
+      outline: 0;
+      padding: 0;
+      cursor: default;
+    }
+    a {
+      outline: 2px solid black;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+    span.open {
+      margin-left: -92px;
+      margin-right: 92px;
+    }
+  }
+}
+
 .nodots {
   list-style-type: none;
   padding: 0;
@@ -36,6 +125,26 @@ ul.users li {
   }
 }
 
+#search-bar {
+  max-width: calc(100% - 12px);
+  flex-direction: row;
+  justify-content: space-between;
+  div {
+    width: 80%;
+    justify-content: stretch;
+    input {
+      width: calc(100% - 140.11px);
+    }
+  }
+  div.submit {
+    width: 20%;
+    button {
+      padding: 0 5px 2px;
+      width: 100%;
+    }
+  }
+}
+
 nav {
   display: flex;
   padding: 2px;
@@ -46,10 +155,10 @@ nav {
 }
 
 .forum-directory {
-  min-width: 25%;
+  min-width: 20%;
 }
 .forum-directory.padded.bordered.margined {
-  min-width: calc(25% - 16px);
+  min-width: calc(20% - 16px);
   width: 100%;
 }
 
@@ -97,11 +206,10 @@ nav {
 summary {
   display: block;
 }
-details {
-  summary::after{
-    content: '▸';
-    float: right;
-  }
+
+details summary::after {
+  content: '▸';
+  float: right;
 }
 details[open] {
   summary::after {
