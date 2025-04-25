@@ -11,7 +11,7 @@ import * as forumService from '../../services/forumService';
 import * as topicService from '../../services/topicService';
 import * as commentService from '../../services/commentService';
 
-const EditTopicForum = ({props, getSomeId}) => {
+const EditTopicForum = ({props, getFuncs}) => {
     let params = useParams();
     const navigate = useNavigate();
 
@@ -34,6 +34,8 @@ const EditTopicForum = ({props, getSomeId}) => {
     
     const { forum, handleForum, } = props;
     
+    const { getSomeId, getLatestWithin } = getFuncs;
+
     const [formData, setFormData] = useState({
         title: topic.title,
         description: topic.description,

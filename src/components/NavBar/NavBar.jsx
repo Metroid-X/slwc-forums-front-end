@@ -61,7 +61,7 @@ const NavBar = ({props}) => {
                 >
                     User-List
                 </Link>
-                <Link to='/' 
+                <Link  
                     className="bordered padded margined forum-directory"
                     onClick={handleSignOut}
                  >

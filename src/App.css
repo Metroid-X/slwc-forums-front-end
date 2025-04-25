@@ -11,6 +11,14 @@
   main { width: calc(100%); }
   nav { width: calc(100% - 8px); }
   hr { width: calc(100% - 2px); }
+  
+  div,main,nav {
+    background-color: #213547;
+  }
+  main {
+    padding: 4px;
+    outline: 2px solid black;
+  }
 }
 
 .no-top {
@@ -74,6 +82,9 @@ span.tags {
       border-radius: 4px;
       cursor: pointer;
     }
+    span.closed {
+      margin-right: -7px;
+    }
   }
   
   details[open] {
@@ -125,6 +136,10 @@ ul.users li {
   }
 }
 
+.centered {
+  text-align: center;
+}
+
 #search-bar {
   max-width: calc(100% - 12px);
   flex-direction: row;
@@ -143,6 +158,32 @@ ul.users li {
       width: 100%;
     }
   }
+}
+
+#comment-form,#profile-form {
+  max-width: 100%;
+  align-items: center;
+  .field {
+    width: 60%;
+    justify-content: stretch;
+    align-items: start;
+    margin: 0;
+    padding: 6px 4px;
+  }
+  input {
+    align-self: center;
+    width: calc(100%);
+    max-width: calc(100% - 7px);
+  }
+  textarea {
+    align-self: center;
+    min-width: calc(100% - 5px);
+    max-width: calc(100% - 5px);
+  }
+}
+
+div.comment {
+  margin-top: 8px;
 }
 
 nav {
@@ -166,10 +207,20 @@ nav {
   min-height: 70px;
 }
 
+.fit-w {
+  max-width: fit-content;
+}
+
+.fit-h {
+  max-height: fit-content;
+}
+
 .go-right {
+  display: block;
   float: right;
 }
 .go-left {
+  display: block;
   float: left;
 }
 
@@ -183,6 +234,10 @@ nav {
 
 .padded {
   padding: 4px;
+}
+
+.padded-2 {
+  padding: 8px;
 }
 
 .margined {
@@ -261,9 +316,17 @@ form {
 
   button {
     width: 30%;
-    margin: 0 10%;
   }
+}
 
+.stacked {
+  margin-bottom: 16px;
+}
+
+div.side-by-side {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
 }
 
 

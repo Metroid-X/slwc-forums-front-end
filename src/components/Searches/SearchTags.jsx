@@ -10,7 +10,7 @@ import * as forumService from '../../services/forumService';
 import * as topicService from '../../services/topicService';
 import * as commentService from '../../services/commentService';
 
-const SearchTags = ({props, getSomeId, searchbar}) => {
+const SearchTags = ({props, getFuncs, searchbar}) => {
     let params = useSearchParams();
     const navigate = useNavigate();
     const { user } = useContext(UserContext);
@@ -24,6 +24,8 @@ const SearchTags = ({props, getSomeId, searchbar}) => {
 
     const { forum, handleForum, } = props;
     
+    const { getSomeId, getLatestWithin, writeDate, } = getFuncs;
+
     useEffect(() => {
         const fetchStuff = async () => {
             try {
@@ -66,12 +68,6 @@ const SearchTags = ({props, getSomeId, searchbar}) => {
     const handleChange = (evt) => {
         setMessage('');
         setFormData({...formData, [evt.target.name]: evt.target.value });
-    }
-
-    const handleTag = async (evt) => {
-        evt.preventDefault()
-        const searchResult = await forumService.search(formData.t);
-        setTopics(searchResult);
     }
 
     const handleSubmit = async (evt) => {

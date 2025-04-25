@@ -1,9 +1,9 @@
 import { useEffect, useContext, useState } from "react";
-import { Link, useParams } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
 
 import { UserContext } from "../../contexts/UserContext";
 
-import ProfileComponent from "../UserProfile/ProfileComponent";
+import Comments from "../Forums/Comments";
 
 import * as userService from '../../services/userService';
 import * as profileService from '../../services/profileService';
@@ -11,10 +11,13 @@ import * as forumService from '../../services/forumService';
 import * as topicService from '../../services/topicService';
 import * as commentService from '../../services/commentService';
 
-const Topics = ({props}) => {
+const Topics = ({props, getFuncs}) => {
     let params = useParams();
+    const navigate = useNavigate();
+
     const { user } = useContext(UserContext);
     const [profiles, setProfiles] = useState([]);
+    const [comments, setComments] = useState([]);
     const [branchTopic, setTopic] = useState({
         branch: {},
         topic: {},
@@ -25,6 +28,8 @@ const Topics = ({props}) => {
 
     const { forum, handleForum, } = props;
     
+    const { getSomeId, getLatestWithin, writeDate, } = getFuncs;
+
     useEffect(() => {
 
         const fetchStuff = async () => {
@@ -32,6 +37,10 @@ const Topics = ({props}) => {
             const fetchedProfiles = await profileService.index();
             console.log(fetchedProfiles);
             setProfiles([...fetchedProfiles]);
+            
+            const fetchedComments = await commentService.index();
+            console.log(fetchedComments);
+            setComments([...fetchedComments]);
             
             const fetchedTopic = await topicService.branchTopic(params.branchName, params.topicId);
             console.log(fetchedTopic);
@@ -57,7 +66,59 @@ const Topics = ({props}) => {
         }
     };
     
-    const { branch, topic, topicComments, profile, topicTags } = branchTopic
+    const { branch, topic, topicComments, profile, topicTags } = branchTopic;
+    
+    const [formData, setFormData] = useState({
+        topicId: params.topicId,
+        commentBody: params.commentId?(topicComments?.find(
+            _id => _id === params.commentId
+        )?.body):(''),
+        linkedImages: params.commentId?String(topicComments?.find(
+            _id => _id === params.commentId
+        )?.linkedImages)?.replaceAll(' ',',')?.replaceAll(',',' '):(''),
+    });
+
+    const { commentBody, linkedImages } = formData;
+
+    const handleChange = (evt) => {
+        setFormData({ ...formData, [evt.target.name]: evt.target.value });
+        console.log(formData)
+    };
+
+    const handleAddComment = async (evt) => {
+        evt.preventDefault()
+        try {
+            if (params.commentId===undefined) {
+                const newComment = await commentService.create(formData);
+                console.log(newComment);
+                setComments([...comments, newComment]);
+            } else {
+                const updatedComment = await commentService.update(formData,params.commentId);
+                console.log(updatedComment);
+            };
+
+            navigate(`/forums/${params.branchName}/${params.topicId}`)
+            .then(setFormData({
+                topicId: params.topicId,
+                commentBody: (''),
+                linkedImages: (''),
+            }));
+            
+            const fetchedTopic = await topicService.branchTopic(params.branchName, params.topicId);
+            console.log(fetchedTopic);
+            setTopic({...fetchedTopic});
+            
+        } catch (err) {
+            console.log(err.message);
+        }
+    }
+
+
+    const isFormInvalid = () => {
+        return !(commentBody);
+    };
+
+    console.log(formData);
 
     return (
         <main className="margined no-center-text">
@@ -66,7 +127,7 @@ const Topics = ({props}) => {
                 <div className="bordered padded margined">
                     <div className="opts">
                         Options:
-                        {(topic.userId === user.profile) ? (
+                        {(topic.userId === user?.profile) ? (
                             <>
                             &nbsp;&nbsp;
                             <Link 
@@ -103,6 +164,13 @@ const Topics = ({props}) => {
                     </div>
                 </div>
                 <div className="bordered padded margined top-box">
+                    <sup className="go-right">
+                        {writeDate(
+                            'Posted',
+                            topic.datePosted,
+                            topic.dateUpdated
+                        )}
+                    </sup>
                     <div className="av-box bordered author go-left">
                         <Link to={(`/profiles/${profile.displayName}/${profile._id}`)}>
                             <div>
@@ -147,19 +215,106 @@ const Topics = ({props}) => {
                         )}
                     </div>
                     {topicComments?.map(comment=>(
-                        <div className="bordered padded margined">
-                            {comment.body}
-                            {(comment.linkedImages)?(
-                                <>
-                                    {comment.linkedImages?.map(imgURL => (
-                                        <>{imgURL?(<img key={imgURL} src={imgURL}/>):(null)}</>
-                                    ))}
-                                </>
-                            ):(
-                                <></>
+                        <Comments
+                            comment={comment}
+                            profile={profiles.find(
+                                ({_id}) => _id === comment.userId
                             )}
-                        </div>
+                            writeDate={writeDate}
+                        />
                     ))}
+                </div>
+                <div className="bordered padded margined">
+                    {user?(
+                        <form
+                            id="comment-form"
+                            className="top-box"
+                            onSubmit={handleAddComment}
+                        >
+                            
+                            <div className="field">
+                                <label htmlFor="commentBody" >Write your Comment: </label>
+                                {params.commentId?(
+                                    <textarea
+                                        id="commentBody"
+                                        value={commentBody}
+                                        name="commentBody"
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                ):(
+                                    <textarea
+                                        id="commentBody"
+                                        defaultValue={commentBody}
+                                        name="commentBody"
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                )}
+                            </div>
+                            <div className="field">
+                                <label htmlFor="linkedImages" ></label>
+                                {params.commentId?(
+                                    <input
+                                        id="linkedImages"
+                                        value={linkedImages}
+                                        type="text"
+                                        name="linkedImages"
+                                        onChange={handleChange}
+                                    />
+                                ):(
+                                    <input
+                                        id="linkedImages"
+                                        defaultValue={linkedImages}
+                                        type="text"
+                                        name="linkedImages"
+                                        onChange={handleChange}
+                                    />
+                                )}
+                            </div>
+                            
+                            {params.commentId?(
+                                <div className="submit field side-by-side">
+                                    <button
+                                        disabled={isFormInvalid()}
+                                        className="padded"
+                                    >
+                                        Update Comment
+                                    </button>
+                                    <button 
+                                        onClick={() => navigate(`/forums/${params.branchName}/${params.topicId}`)}
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            ):(
+                                <div className="submit field">
+                                    <button 
+                                        disabled={isFormInvalid}
+                                        className="padded"
+                                    >
+                                        Post Comment
+                                    </button>
+                                </div>
+                            )}
+                        </form>
+                    ):(
+                        <form
+                            id="comment-form"
+                            className="top-box"
+                            onSubmit={handleAddComment}
+                        >
+                            <div className="field centered">
+                                You need to be signed in to comment.
+                            </div>
+                            <Link to={'/sign-up'}>
+                                Sign Up
+                            </Link>
+                            <Link to={'/sign-in'}>
+                                Sign In
+                            </Link>
+                        </form>
+                    )}
                 </div>
             </div>
         </main>
