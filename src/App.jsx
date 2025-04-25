@@ -146,7 +146,7 @@ const App = () => {
 
   return (
     <>
-    <div>
+    <div className='bordered padded'>
       {user?(<>Hello, {userProfile?.displayName}</>):(<>Hello, Guest</>)}.
     </div>
       <NavBar props={props} />

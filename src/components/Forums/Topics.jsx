@@ -30,6 +30,16 @@ const Topics = ({props, getFuncs}) => {
     
     const { getSomeId, getLatestWithin, writeDate, } = getFuncs;
 
+    const [formData, setFormData] = useState({
+        topicId: params.topicId,
+        commentBody: params.commentId?(topicComments?.find(
+            _id => _id === params.commentId
+        )?.body):(''),
+        linkedImages: params.commentId?String(topicComments?.find(
+            _id => _id === params.commentId
+        )?.linkedImages)?.replaceAll(' ',',')?.replaceAll(',',' '):(''),
+    });
+
     useEffect(() => {
 
         const fetchStuff = async () => {
@@ -47,6 +57,16 @@ const Topics = ({props, getFuncs}) => {
             setTopic({...fetchedTopic});
             
             handleForum(params.branchName);
+
+            setFormData({
+                topicId: params.topicId,
+                commentBody: params.commentId?(topicComments?.find(
+                    _id => _id === params.commentId
+                )?.body):(''),
+                linkedImages: params.commentId?String(topicComments?.find(
+                    _id => _id === params.commentId
+                )?.linkedImages)?.replaceAll(' ',',')?.replaceAll(',',' '):(''),
+            })
 
         }
         fetchStuff();
@@ -68,16 +88,6 @@ const Topics = ({props, getFuncs}) => {
     
     const { branch, topic, topicComments, profile, topicTags } = branchTopic;
     
-    const [formData, setFormData] = useState({
-        topicId: params.topicId,
-        commentBody: params.commentId?(topicComments?.find(
-            _id => _id === params.commentId
-        )?.body):(''),
-        linkedImages: params.commentId?String(topicComments?.find(
-            _id => _id === params.commentId
-        )?.linkedImages)?.replaceAll(' ',',')?.replaceAll(',',' '):(''),
-    });
-
     const { commentBody, linkedImages } = formData;
 
     const handleChange = (evt) => {
@@ -97,16 +107,16 @@ const Topics = ({props, getFuncs}) => {
                 console.log(updatedComment);
             };
 
+            const fetchedTopic = await topicService.branchTopic(params.branchName, params.topicId);
+            console.log(fetchedTopic);
+            setTopic({...fetchedTopic});
+            
             navigate(`/forums/${params.branchName}/${params.topicId}`)
             .then(setFormData({
                 topicId: params.topicId,
                 commentBody: (''),
                 linkedImages: (''),
             }));
-            
-            const fetchedTopic = await topicService.branchTopic(params.branchName, params.topicId);
-            console.log(fetchedTopic);
-            setTopic({...fetchedTopic});
             
         } catch (err) {
             console.log(err.message);

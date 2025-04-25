@@ -33,9 +33,9 @@ const ProfileForm = ({getFuncs}) => {
                 setProfile({...fetchedDisplay});
 
                 setFormData({
-                    displayName: fetchedDisplay.displayName,
-                    avatar: fetchedDisplay.avatar,
-                    bio: fetchedDisplay.bio,
+                    displayName: fetchedDisplay?.displayName,
+                    avatar: fetchedDisplay?.avatar,
+                    bio: fetchedDisplay?.bio,
                 });
 
             } catch (err) {
@@ -84,6 +84,7 @@ const ProfileForm = ({getFuncs}) => {
     return (
         <main>
             <form 
+                onSubmit={handleSubmit}
                 id="profile-form"
                 className="top-box"
             >

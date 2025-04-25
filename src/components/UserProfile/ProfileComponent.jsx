@@ -104,9 +104,11 @@ const ProfileComponent = ({getFuncs}) => {
                         <sup>|&nbsp;&nbsp;Images: {
                             images.filter(image => image.userId === profile._id).length
                         }&nbsp;&nbsp;|</sup>
-                    </span>
-                    
+                    </span>    
                 </h4>
+                <p>
+                    {profile.bio?profile.bio:''}
+                </p>
             </div>
             <hr />
             <ul className="bordered padded nodots no-center-text no-top">

@@ -89,16 +89,6 @@ const SearchTags = ({props, getFuncs, searchbar}) => {
 
             {searchbar?(
                 <form onSubmit={handleSubmit} id="search-bar" className="bordered padded">
-                    {/* <div className="margined padded">
-                        <label htmlFor="q">Search by Name: &nbsp;</label> 
-                        <input 
-                            id="q"
-                            value={q}
-                            type="text" 
-                            name="q"
-                            onChange={handleChange}
-                        /> &nbsp; 
-                    </div> */}
                     <div className="margined padded">
                         <label htmlFor="t">Search by Tags: &nbsp;</label>
                         <input 
@@ -121,8 +111,15 @@ const SearchTags = ({props, getFuncs, searchbar}) => {
 
             <ul className="nodots no-center-text">
             {topics.map(topic => (
-                <li className="bordered padded" key={topic._id}>
-                    <div className="top-box" >
+                <li className="bordered padded stacked" key={topic._id}>
+                    <sup className="go-right">
+                        {writeDate(
+                            'Posted',
+                            topic.datePosted,
+                            topic.dateUpdated
+                        )}
+                    </sup>
+                    <div className="top-box">
                         <div className="av-box bordered author go-left">
                             <Link to={(`/profiles/${getSomeId(topic.userId,profiles).displayName}/${topic.userId}`)}>
                                 <h4>
